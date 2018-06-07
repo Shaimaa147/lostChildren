@@ -29,5 +29,17 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.gms:play-services-places:15.0.1'
+
+//    Fadwa
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
+
+//    Shaimaa
+
+//    Ahmed
+
+//    Islam
     testCompile 'junit:junit:4.12'
 }
