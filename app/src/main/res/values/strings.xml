@@ -5,4 +5,36 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <!--Fadwa-->
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="fname">First Name</string>
+    <string name="lname">Last Name</string>
+    <string name="address">Address</string>
+    <string name="phone">Phone Number</string>
+    <string name="image">Image</string>
+    <string name="new_member">New Member?</string>
+    <string name="already_member">Already a Member?</string>
+    <string name="wrong_signin_data">Wrong Email or Password</string>
+    <string name="duplicated_email">Duplicated email address</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="invalid_password_confirmation">Password confirmation doesn\'t match Password</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="short_password">Password should be at least 6 characters</string>
+    <string name="is_required">&#160;is required</string>
+    <string name="letters_only">&#160;should contain letters only</string>
+
+
+    <!--Shaimaa-->
+
+
+    <!--Ahmed-->
+
+
+    <!--Islam-->
 </resources>
+

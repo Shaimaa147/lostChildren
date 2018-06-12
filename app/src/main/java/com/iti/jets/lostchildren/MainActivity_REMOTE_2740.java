@@ -3,8 +3,6 @@ package com.iti.jets.lostchildren;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +17,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.iti.jets.lostchildren.pojos.User;
 
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private TabLayout tableLayout ;
-    private ViewPager viewPager;
-    private ViewPagerAdpter adpter;
 
     public static final String LOGGED_IN_USER_JSON = "loggedInUserJson";
 
@@ -52,14 +46,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        tableLayout = findViewById(R.id.tableLayoutID);
-        viewPager = findViewById(R.id.pagerID);
-        adpter = new ViewPagerAdpter(getSupportFragmentManager());
-        adpter.addFragment(new FragmentLost() , "Lost Children");
-        adpter.addFragment(new FragmentFound(),"Found Children");
-        viewPager.setAdapter(adpter);
-        tableLayout.setupWithViewPager(viewPager);
 
         User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();

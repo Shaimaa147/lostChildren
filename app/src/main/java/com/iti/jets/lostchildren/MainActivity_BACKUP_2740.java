@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+<<<<<<< HEAD
         tableLayout = findViewById(R.id.tableLayoutID);
         viewPager = findViewById(R.id.pagerID);
         adpter = new ViewPagerAdpter(getSupportFragmentManager());
@@ -60,11 +60,13 @@ public class MainActivity extends AppCompatActivity
         adpter.addFragment(new FragmentFound(),"Found Children");
         viewPager.setAdapter(adpter);
         tableLayout.setupWithViewPager(viewPager);
+=======
 
         User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
         //TODO: Save to shared preferences
 
+>>>>>>> d8bd851cddb352ea1fce872bf9a10b0e1adbfd3a
     }
 
     @Override
