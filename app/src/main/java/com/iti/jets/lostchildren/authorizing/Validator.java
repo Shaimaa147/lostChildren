@@ -73,15 +73,16 @@ public class Validator {
         }
 
         else {
-            if(strToValidateType == FIRST_NAME  && !containsLettersOnly(strToValidate))
+            if(strToValidateType.equals(FIRST_NAME)  && !containsLettersOnly(strToValidate))
                 errorMsg = context.getString(R.string.fname) + context.getString(R.string.letters_only);
 
-            else if(strToValidateType == LAST_NAME);
+            else if(strToValidateType.equals(LAST_NAME)  && !containsLettersOnly(strToValidate))
+                errorMsg = context.getString(R.string.lname) + context.getString(R.string.letters_only);
 
-            else if(strToValidateType == PASSWORD && !validateLength(strToValidate, HomeActivity.minPasswordLength))
+            else if(strToValidateType.equals(PASSWORD) && !validateLength(strToValidate, HomeActivity.minPasswordLength))
                 errorMsg = context.getString(R.string.short_password);
 
-            else if(strToValidateType == PHONE && !TextUtils.isDigitsOnly(strToValidate))
+            else if(strToValidateType.equals(PHONE) && !TextUtils.isDigitsOnly(strToValidate))
                 errorMsg = context.getString(R.string.invalid_phone_number);
 
         }

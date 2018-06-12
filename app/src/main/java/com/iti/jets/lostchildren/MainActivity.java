@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
-        Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
         //TODO: Save to shared preferences
 
     }
