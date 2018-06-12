@@ -34,7 +34,7 @@ public interface LostChildService {
 
     @Multipart
     @POST("imageUploade.json")
-    Call<ResponseBody> uploadImage(
+    Call<ResponseBody> uploadUserImage(
             @Part("email") RequestBody email,
             @Part MultipartBody.Part userImage
     );

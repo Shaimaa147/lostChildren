@@ -7,8 +7,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import com.iti.jets.lostchildren.authorizing.AuthFragmentsHome;
-import com.iti.jets.lostchildren.authorizing.SignInFragment;
 import com.iti.jets.lostchildren.authorizing.SignInFragmentUpdate;
 import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.authorizing.SignUpFragmentUpdate;
@@ -16,7 +14,6 @@ import com.iti.jets.lostchildren.pojos.User;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -36,7 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LostChildServiceClient {
 
-    private static final String serverIp = "10.0.1.50";
+    private static final String serverIp = "192.168.1.4";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
@@ -117,8 +114,8 @@ public class LostChildServiceClient {
                 if (response.code() == 200 && response != null) {
                     if (response.body().getEmail().equals(JSON_MSG_FOUND_EMAIL))
                         signUpFragment.showDuplicatedEmailErrorMsg(true);
-                    /*else
-                        signUpFragment.uploadUserImage(response.body());*/
+                    else
+                        signUpFragment.uploadUserImage(response.body());
                 }
             }
 
@@ -150,18 +147,23 @@ public class LostChildServiceClient {
         });
     }
 
-    public void uploadImageToServer(final User newUser, File imgFile) {
+    public void uploadUserImageToServer(final User newUser, File imgFile, Uri imgUri) {
+
+        Log.i("img", "ZFT");
+        Log.i("img", imgUri.toString());
+
         RequestBody emailPart = RequestBody.create(MultipartBody.FORM, newUser.getEmail());
 
-        RequestBody imgPart = RequestBody.create(MediaType.parse("image/jpg"), imgFile);
+        RequestBody imgPart = RequestBody.create(
+                MediaType.parse(context.getContentResolver().getType(imgUri)),
+                imgFile);
 
         MultipartBody.Part img = MultipartBody.Part.createFormData("image", imgFile.getName(), imgPart);
 
-        Log.i("img", imgFile.getAbsolutePath());
-        service.uploadImage(emailPart, img).enqueue(new Callback<ResponseBody>() {
+        service.uploadUserImage(emailPart, img).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i("img", "ready2");
+                Log.i("img", response.code() + "");
 
                 if (response.code() == 200 && response.body() != null) {
                     signUpFragment.redirectToMainActivity(new Gson().toJson(newUser));
