@@ -27,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
             signInFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_home, signInFragment, SIGN_IN_TAG).commit();
         } else {
-            signInFragment = (SignInFragment) getSupportFragmentManager().findFragmentByTag(SIGN_UP_TAG);
+            signInFragment = (SignInFragment) getSupportFragmentManager().findFragmentByTag(SIGN_IN_TAG);
         }
     }
 

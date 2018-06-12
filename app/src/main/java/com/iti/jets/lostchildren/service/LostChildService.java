@@ -4,6 +4,9 @@ import com.iti.jets.lostchildren.pojos.User;
 
 import java.util.HashMap;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -29,8 +32,11 @@ public interface LostChildService {
     @GET("emailCheck.json")
     Call<HashMap<String, String>> isEmailDuplicated(@Query("email") String email);
 
-//    @Multipart
-//    @POST("imageUploade.json")
-//    void uploadImage(@Part("userImage") ,@Part("email"));
+    @Multipart
+    @POST("imageUploade.json")
+    Call<ResponseBody> uploadImage(
+            @Part("email") RequestBody email,
+            @Part MultipartBody.Part userImage
+    );
 
 }

@@ -1,5 +1,6 @@
 package com.iti.jets.lostchildren.authorizing;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.iti.jets.lostchildren.MainActivity;
 import com.iti.jets.lostchildren.R;
 
 import com.iti.jets.lostchildren.service.*;
@@ -20,14 +22,13 @@ import java.util.Map;
  * Created by Fadwa on 20/05/2018.
  */
 
-public class SignInFragment extends Fragment implements AuthFragmentsHome {
+public class SignInFragment extends Fragment implements SignInFragmentUpdate {
 
     private Button btnSignIn, btnGoToSignUp;
     private TextView errorMsg;
     private TextInputLayout emailLayout, passwordLayout;
     private LostChildServiceClient service;
     private Validator validator;
-    private LogInDataDto logInData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,10 +38,10 @@ public class SignInFragment extends Fragment implements AuthFragmentsHome {
         errorMsg = view.findViewById(R.id.errorMsg);
         btnGoToSignUp = view.findViewById(R.id.btn_goToSignUp);
         btnSignIn = view.findViewById(R.id.btn_signin);
+        errorMsg = view.findViewById(R.id.errorMsg);
 
         validator = Validator.getInstance();
         service = LostChildServiceClient.getInstance();
-        logInData = new LogInDataDto();
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +77,11 @@ public class SignInFragment extends Fragment implements AuthFragmentsHome {
             public void onClick(View v) {
                 SignUpFragment signUpFragment = new SignUpFragment();
                 signUpFragment.setArguments(getActivity().getIntent().getExtras());
-                getActivity().getSupportFragmentManager().beginTransaction().
-                        replace(R.id.fragment_home, signUpFragment, HomeActivity.SIGN_UP_TAG).commit();
+                getActivity()
+                        .getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_home, signUpFragment, HomeActivity.SIGN_UP_TAG)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -86,6 +90,16 @@ public class SignInFragment extends Fragment implements AuthFragmentsHome {
 
     @Override
     public void redirectToMainActivity(String userJson) {
+        Intent i = new Intent(getContext(), MainActivity.class);
+        i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
+        startActivity(i);
+    }
 
+    @Override
+    public void showInvalidEmailOrPasswordMsg(boolean invalidEmailOrPassword) {
+        if(invalidEmailOrPassword)
+            errorMsg.setVisibility(View.VISIBLE);
+        else
+            errorMsg.setVisibility(View.INVISIBLE);
     }
 }
