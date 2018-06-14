@@ -34,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LostChildServiceClient {
 
     
-    private static final String serverIp = "10.0.1.50";
+    private static final String serverIp = "192.168.1.4";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
@@ -150,27 +150,26 @@ public class LostChildServiceClient {
 
     public void uploadUserImageToServer(final User newUser, File imgFile, Uri imgUri) {
 
-        Log.i("img", "ZFT");
-        Log.i("img", imgUri.toString());
+        Log.i("img", context.getContentResolver().getType(imgUri));
 
         RequestBody emailPart = RequestBody.create(MultipartBody.FORM, newUser.getEmail());
+        RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
 
         RequestBody imgPart = RequestBody.create(
                 MediaType.parse(context.getContentResolver().getType(imgUri)),
                 imgFile);
 
-        MultipartBody.Part img = MultipartBody.Part.createFormData("image", imgFile.getName(), imgPart);
+        //MultipartBody.Part img = MultipartBody.Part.createFormData("image", imgFile.getName(), imgPart);
 
-        service.uploadUserImage(emailPart, img).enqueue(new Callback<ResponseBody>() {
+        service.uploadUserImage(emailPart, extensionPart, imgPart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.i("img", response.code() + "");
+                Log.i("img", response.body().toString() + "");
 
                 if (response.code() == 200 && response.body() != null) {
                     signUpFragment.redirectToMainActivity(new Gson().toJson(newUser));
-                    Toast.makeText(context, "Uploading...", Toast.LENGTH_LONG);
                 }
-
             }
 
             @Override
@@ -179,8 +178,6 @@ public class LostChildServiceClient {
 
             }
         });
-
-
     }
 
 }

@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<<<<<<< HEAD
-=======
-
->>>>>>> c901d7d0f045898f322a1713fefd2e6b24f5ddf4
     <color name="colorPrimary">#393939</color>
     <color name="colorPrimaryDark">#2f2f2f</color>
     <color name="colorAccent">#5267f8</color>
     <color name="backgroundfragment">#262626</color>
     <color name="errorColor">#f00</color>
-<<<<<<< HEAD
-=======
-
->>>>>>> c901d7d0f045898f322a1713fefd2e6b24f5ddf4
 </resources>

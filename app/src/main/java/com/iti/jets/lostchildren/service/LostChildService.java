@@ -36,7 +36,8 @@ public interface LostChildService {
     @POST("imageUploade.json")
     Call<ResponseBody> uploadUserImage(
             @Part("email") RequestBody email,
-            @Part MultipartBody.Part userImage
+            @Part("extension") RequestBody extension,
+            @Part("userImage\"; filename=\"pp.png ") RequestBody userImage
     );
 
 }
