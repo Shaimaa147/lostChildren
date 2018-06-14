@@ -19,6 +19,7 @@
 
     <style name="MyAppTheme.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/errorColor</item>
+        <item name="textColorError">@color/errorColor</item>
         <item name="android:textSize">12sp</item>
     </style>
 

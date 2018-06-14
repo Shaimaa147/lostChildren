@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 import static com.iti.jets.lostchildren.authorizing.SignUpFragment.*;
+import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.FROMAGE;
+import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.TOAGE;
+import static com.iti.jets.lostchildren.reporting.LostChildReportFragment.*;
 
 /**
  * Created by Fadwa on 20/05/2018.
@@ -50,7 +53,7 @@ public class Validator {
         return false;
     }
 
-    //First Name, Last Name, Phone, Password Validation
+    //First Name, Last Name, Phone, Password,AGE Validation
     //TODO: Validate Max Length (DataBase)
     public String validateField(String strToValidateType, TextInputLayout layoutToValidate) {
         String errorMsg = "";
@@ -68,6 +71,12 @@ public class Validator {
                 case PASSWORD:
                     errorMsg = context.getString(R.string.password);
                     break;
+                case AGE:
+                    errorMsg = context.getString(R.string.age);
+                    break;
+                case Reporter_PHONE:
+                    errorMsg = context.getString(R.string.reporter_phone);
+                    break;
             }
             errorMsg += context.getString(R.string.is_required);
         }
@@ -78,12 +87,19 @@ public class Validator {
 
             else if(strToValidateType == LAST_NAME);
 
+            else if(strToValidateType == MOTHER_NAME  && !containsLettersOnly(strToValidate))
+                errorMsg = context.getString(R.string.mname) + context.getString(R.string.letters_only);
+
             else if(strToValidateType == PASSWORD && !validateLength(strToValidate, HomeActivity.minPasswordLength))
                 errorMsg = context.getString(R.string.short_password);
 
-            else if(strToValidateType == PHONE && !TextUtils.isDigitsOnly(strToValidate))
+            else if((strToValidateType == PHONE || strToValidateType.equals(Reporter_PHONE))
+                    && !TextUtils.isDigitsOnly(strToValidate))
                 errorMsg = context.getString(R.string.invalid_phone_number);
 
+            else if((strToValidateType.equals(AGE) || strToValidateType.equals(FROMAGE) || strToValidateType.equals(TOAGE))
+                    && !TextUtils.isDigitsOnly(strToValidate) && Integer.parseInt(strToValidate) > 0)
+                errorMsg = context.getString(R.string.invalid_age);
         }
         return errorMsg;
     }

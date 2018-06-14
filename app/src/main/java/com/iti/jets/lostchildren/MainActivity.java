@@ -1,8 +1,11 @@
 package com.iti.jets.lostchildren;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,11 +19,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.iti.jets.lostchildren.pojos.User;
+import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String LOGGED_IN_USER_JSON = "loggedInUserJson";
+    public static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
+        currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
         //TODO: Save to shared preferences
 
@@ -91,22 +96,52 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
+        switch(item.getItemId()) {
+            case R.id.reportLost:
+                LostChildReportFragment lostChildrenFragment =  new LostChildReportFragment();
+                replaceFragment(this, lostChildrenFragment, R.id.content_layout, false, "upcoming");
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.action_settings:
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void replaceFragment(AppCompatActivity activity, android.support.v4.app.Fragment fragment, @IdRes int container,
+                                 boolean isNeedToAddToStack,
+                                 String fragmentTag) {
+
+        FragmentManager manager = activity.getSupportFragmentManager();
+        boolean isInStack = manager.popBackStackImmediate(fragmentTag, 0);
+        FragmentTransaction ft = manager.beginTransaction();
+
+        if (isInStack) {
+            fragment = manager.findFragmentByTag(fragmentTag);
+        }
+
+        ft.replace(container, fragment, fragmentTag);
+        if (!isInStack && isNeedToAddToStack) {
+            ft.addToBackStack(fragmentTag);
+        }
+
+        ft.commit();
     }
 }

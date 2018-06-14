@@ -1,9 +1,12 @@
 package com.iti.jets.lostchildren.service;
 
+import com.iti.jets.lostchildren.pojos.FoundChild;
+import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.pojos.User;
 
 import java.util.HashMap;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -32,5 +35,14 @@ public interface LostChildService {
 //    @Multipart
 //    @POST("imageUploade.json")
 //    void uploadImage(@Part("userImage") ,@Part("email"));
+
+    @Multipart
+    @POST("lostReport.json")
+    Call<HashMap<String, String>> reportLost (@Part LostChild lost, @Part("email") String email,
+                                              @Part("image") MultipartBody.Part image);
+
+    @POST("foundReport.json")
+    Call<HashMap<String, String>> reportFound (@Body FoundChild lost, @Query("email") String email,
+                                               @Part("image") MultipartBody.Part image);
 
 }
