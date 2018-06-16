@@ -1,7 +1,11 @@
 package com.iti.jets.lostchildren.reporting;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -33,6 +37,8 @@ import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import static com.iti.jets.lostchildren.authorizing.SignUpFragment.*;
+
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -165,6 +171,10 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                 phoneWrapper.setError(validator.validateField(PHONE, phoneWrapper));
 
                 // add image
+                String imgPath = "/storage/sdcard0/Pictures/Woods.jpg";
+                File imgFile = new File(imgPath);
+                Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+                //
                 if (firstNameWraapper.getError() == "" && lastNameWrapper.getError() == "" &&
                         phoneWrapper.getError() == "" && ageWrapper.getError() == "") {
                     LostChild child = new LostChild();
@@ -186,8 +196,13 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                         child.setLostLocation(lostLocation.getText().toString());
                     if(!originalAddress.getText().toString().equals(""))
                         child.setOrginalAddress(originalAddress.getText().toString());
-
-                    service.reportLost(child, MainActivity.currentUser.getEmail(), null);
+                    child.setImageUrl(imgUri);
+                    Log.i("LostFragment","//////////////////////////////"+ imgUri.toString());
+                    Log.i("LostFragment", imgFile.toString());
+                    Log.i("LostFragment",MainActivity.currentUser.getEmail().toString());
+                    service.setContext(getActivity().getApplicationContext());
+                    service.setLostChildReportFragment(LostChildReportFragment.this);
+                    service.reportLost(child, MainActivity.currentUser.getEmail(), imgFile, imgUri);
                 }
             }
         });
@@ -303,5 +318,21 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
 //        fragmentTransaction.replace(R.id.content_frame, fragment);
 //        fragmentTransaction.addToBackStack(null);
 //        fragmentTransaction.commit();
+    }
+
+    private Uri getUriFromPath(String filePath, Context context) {
+        long photoId;
+        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+
+        String[] projection = {MediaStore.Images.ImageColumns._ID};
+        // TODO This will break if we have no matching item in the MediaStore.
+        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        photoId = cursor.getLong(columnIndex);
+
+        cursor.close();
+        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }

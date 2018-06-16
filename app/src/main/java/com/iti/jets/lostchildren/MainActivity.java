@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(adpter);
         tableLayout.setupWithViewPager(viewPager);
 
-        User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
+        currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         //Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
 
         //TODO: Save to shared preferences

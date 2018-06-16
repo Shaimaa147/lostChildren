@@ -187,10 +187,20 @@ public class LostChildServiceClient {
         });
     }
 
-    public void reportLost(final LostChild child, String email, MultipartBody.Part image) {
+    public void reportLost(final LostChild child, String email, File imgFile, Uri imgUri) {
 
+        Log.i("img", imgUri.toString());
+        Log.i("img", context.getContentResolver().getType(imgUri));
+        RequestBody emailPart = RequestBody.create(MultipartBody.FORM, email);
+        RequestBody childPart = RequestBody.create(MultipartBody.FORM, child.getFirstName());
+        RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
 
-        service.reportLost(child, email,image).enqueue(new Callback<HashMap<String, String>>() {
+        RequestBody imgPart = RequestBody.create(
+                MediaType.parse(context.getContentResolver().getType(imgUri)),
+                imgFile);
+//        RequestBody childPart = RequestBody.create(MediaType.parse("multipart/form-data"), new Gson().toJson(child));
+
+        service.reportLost(childPart, emailPart, extensionPart,imgPart).enqueue(new Callback<HashMap<String, String>>() {
             @Override
             public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
                 if(response != null && response.code() == 200) {
