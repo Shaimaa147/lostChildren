@@ -37,13 +37,24 @@ public interface LostChildService {
 
     @Multipart
     @POST("imageUploade.json")
-    Call<ResponseBody> uploadImage(
+    Call<ResponseBody> uploadUserImage(
             @Part("email") RequestBody email,
-            @Part MultipartBody.Part userImage
+            @Part("extension") RequestBody extension,
+            @Part("userImage\"; filename=\"pp.png ") RequestBody userImage
     );
    @GET("lostRetrieve.json")
    Call<ArrayList<LostChild>> retriveLost();
    @GET("foundRetrieve.json")
    Call<ArrayList<FoundChild>> retriveFound();
+
+    @Multipart
+    @POST("lostReport.json")
+    Call<HashMap<String, String>> reportLost (@Part("child") RequestBody lostChild, @Part("email") RequestBody email,
+                                              @Part("extension") RequestBody extension,
+                                              @Part("image\"; filename=\"pp.png ") RequestBody image);
+
+    @POST("foundReport.json")
+    Call<HashMap<String, String>> reportFound (@Body FoundChild lost, @Query("email") String email,
+                                               @Part("image") MultipartBody.Part image);
 
 }

@@ -1,6 +1,8 @@
 package com.iti.jets.lostchildren.homeScreen;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -16,9 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.gson.Gson;
+
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.adapter.ViewPagerAdpter;
+
+import com.iti.jets.lostchildren.authorizing.HomeActivity;
 import com.iti.jets.lostchildren.pojos.User;
+import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -28,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPagerAdpter adpter;
 
     public static final String LOGGED_IN_USER_JSON = "loggedInUserJson";
+    public static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +69,9 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(adpter);
         tableLayout.setupWithViewPager(viewPager);
 
-        User currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
+        currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         //Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
+
         //TODO: Save to shared preferences
 
     }
@@ -106,12 +114,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
+        if (id == R.id.Home) {
+            // Handle the home action
+        } else if (id == R.id.reportLost) {
+            redirectToMainActivity(HomeActivity.LOST_TAG);
+        } else if (id == R.id.reportFound) {
+            redirectToMainActivity(HomeActivity.FOUND_TAG);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -124,4 +132,11 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void redirectToMainActivity(String requiredFragment) {
+        Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+        i.putExtra(HomeActivity.REQUIRED_FREGMENT, requiredFragment);
+        startActivity(i);
+    }
+
 }

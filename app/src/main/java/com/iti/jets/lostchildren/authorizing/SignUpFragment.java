@@ -1,7 +1,11 @@
 package com.iti.jets.lostchildren.authorizing;
-
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +21,7 @@ import com.iti.jets.lostchildren.R;
 
 import com.iti.jets.lostchildren.pojos.User;
 import com.iti.jets.lostchildren.service.*;
+import java.io.File;
 
 /**
  * Created by Fadwa on 21/05/2018.
@@ -176,8 +181,12 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
 
     @Override
     public void uploadUserImage(User newUser) {
+        String imgPath = "/storage/emulated/0/pic.jpg";
+        File imgFile = new File(imgPath);
 
-
+        service.setContext(getActivity().getApplicationContext());
+        Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+        service.uploadUserImageToServer(newUser, imgFile, imgUri);
     }
 
     @Override
@@ -185,5 +194,21 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         Intent i = new Intent(getContext(), MainActivity.class);
         i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
         startActivity(i);
+    }
+
+    private Uri getUriFromPath(String filePath, Context context) {
+        long photoId;
+        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+
+        String[] projection = {MediaStore.Images.ImageColumns._ID};
+        // TODO This will break if we have no matching item in the MediaStore.
+        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        photoId = cursor.getLong(columnIndex);
+
+        cursor.close();
+        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }

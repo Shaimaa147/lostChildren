@@ -30,7 +30,10 @@
 
 
     <!--Shaimaa-->
-
+    <string name="mname">Mother Name</string>
+    <string name="age">Age</string>
+    <string name="reporter_phone">Reporter\'s phone Number</string>
+    <string name="invalid_age">Invalid age, it should be a number greater than 0 </string>
 
     <!--Ahmed-->
 
