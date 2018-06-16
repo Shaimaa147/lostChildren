@@ -12,9 +12,14 @@ import com.iti.jets.lostchildren.authorizing.SignInFragment;
 import com.iti.jets.lostchildren.authorizing.SignInFragmentUpdate;
 import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.authorizing.SignUpFragmentUpdate;
+import com.iti.jets.lostchildren.homeScreen.FragmentFound;
+import com.iti.jets.lostchildren.homeScreen.FragmentLost;
+import com.iti.jets.lostchildren.pojos.FoundChild;
+import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.pojos.User;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,8 +40,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class LostChildServiceClient {
-    
-    private static final String serverIp = "10.0.1.50";
+
+    private static final String serverIp = "192.168.1.3";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
@@ -44,11 +49,20 @@ public class LostChildServiceClient {
     public static final String JSON_MSG_SUCCESS = "SUCCESS";
     public static final String JSON_MSG_FAILED = "FAILED";
 
+
     private static LostChildServiceClient client;
     private LostChildService service;
     private SignUpFragmentUpdate signUpFragment;
     private SignInFragmentUpdate signInFragment;
+    private FragmentLost lostFragment;
+    private FragmentFound fragmentFound;
+
+    public void setFragmentFound(FragmentFound fragmentFound) {
+        this.fragmentFound = fragmentFound;
+    }
+
     private Context context;
+
 
     private LostChildServiceClient() {
         OkHttpClient client = new OkHttpClient.Builder()
@@ -69,6 +83,10 @@ public class LostChildServiceClient {
 
     public void setSignUpFragment(SignUpFragmentUpdate signUpFragment) {
         this.signUpFragment = signUpFragment;
+    }
+
+    public void setLostFragment(FragmentLost lostFragment) {
+        this.lostFragment = lostFragment;
     }
 
     public void setSignInFragment(SignInFragmentUpdate signInFragment) {
@@ -179,5 +197,45 @@ public class LostChildServiceClient {
 
 
     }
+    public void retriveLosts(){
+
+        service.retriveLost().enqueue(new Callback<ArrayList<LostChild>>() {
+
+            @Override
+            public void onResponse(Call<ArrayList<LostChild>> call, Response<ArrayList<LostChild>> response) {
+
+                if (response.code() == 200 && response != null) {
+                    lostFragment.updateList(response.body(),true);
+                    Log.i("sec","callllled" + response.body().size());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<LostChild>> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+ public  void retriveFounds(){
+
+        service.retriveFound().enqueue(new Callback<ArrayList<FoundChild>>() {
+            @Override
+            public void onResponse(Call<ArrayList<FoundChild>> call, Response<ArrayList<FoundChild>> response) {
+                if (response.code() == 200 && response != null) {
+                    Log.i("first","callllled" + response.body().size());
+                     fragmentFound.updateList(response.body(), true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<FoundChild>> call, Throwable t) {
+
+            }
+        });
+
+   }
 
 }

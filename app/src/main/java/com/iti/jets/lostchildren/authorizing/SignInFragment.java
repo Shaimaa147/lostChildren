@@ -10,13 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.iti.jets.lostchildren.MainActivity;
+import com.iti.jets.lostchildren.homeScreen.MainActivity;
 import com.iti.jets.lostchildren.R;
 
 import com.iti.jets.lostchildren.service.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Fadwa on 20/05/2018.

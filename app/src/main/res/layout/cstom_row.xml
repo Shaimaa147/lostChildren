@@ -19,16 +19,40 @@
         <TextView
             android:textColor="#ffffff"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:text="Phone Number" android:id="@+id/textTwoID"/>
+            android:layout_height="wrap_content" android:text="age" android:id="@+id/textTwoID"/>
+        <TextView
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="city" android:id="@+id/textThreeID" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="vertical"
+        >
         <ImageView
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="end"
+            android:layout_width="25dp"
+            android:layout_height="25dp" android:src="@mipmap/ic_launcher_round" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:orientation="horizontal" android:gravity="end"
+            >
+            <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:src="@mipmap/ic_launcher_round" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"
+            android:text="Report By:" android:id="@+id/reportByID"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:text="Report By:" android:id="@+id/reporterID"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.iti.jets.lostchildren;
+package com.iti.jets.lostchildren.homeScreen;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,9 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.iti.jets.lostchildren.R;
+import com.iti.jets.lostchildren.adapter.ViewPagerAdpter;
 import com.iti.jets.lostchildren.pojos.User;
 
 

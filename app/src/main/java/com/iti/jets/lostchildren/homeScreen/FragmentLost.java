@@ -1,13 +1,22 @@
-package com.iti.jets.lostchildren;
+package com.iti.jets.lostchildren.homeScreen;
 
-import android.app.Fragment;
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.iti.jets.lostchildren.R;
+import com.iti.jets.lostchildren.adapter.MyAdapter;
+import com.iti.jets.lostchildren.pojos.LostChild;
+import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,38 +25,73 @@ import java.util.List;
  * Created by Ahmed Ali on 6/10/2018.
  */
 
-public class FragmentLost extends android.support.v4.app.Fragment{
+public class FragmentLost extends android.support.v4.app.Fragment implements RetriveLostChildren, SwipeRefreshLayout.OnRefreshListener {
+    ArrayList<LostChild>  missingChildrenList;
     private RecyclerView recyclerView ;
     private MyAdapter adapter ;
+    private LostChildServiceClient service;
+    private SwipeRefreshLayout swipeRefresh;
     View v ;
 
    public FragmentLost(){
 
    }
-    public  static List<Information> getData(){
-        List<Information> data = new ArrayList<>();
-        int [] icons = {R.drawable.one,R.drawable.two,R.drawable.three,R.drawable.four};
-        String [] lostNames= {"First Name","Secound Name","Third Name","Fourth Name"};
-        String [] phones= {"01111","02222","03333","04444"};
-        for (int i = 0 ; i<icons.length && i<lostNames.length;i++) {
-            Information current = new Information();
-            current.setPhoto(icons[i]) ;
-            current.setName(lostNames[i]);
-            current.setPhone(phones[i]);
-            data.add(current);
-        }
-        return  data;
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-       v = inflater.inflate(R.layout.lost_fragment,container,false);
-        recyclerView = v.findViewById(R.id.recyclerViewID);
-        adapter = new MyAdapter(getActivity(),getData());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        service =LostChildServiceClient.getInstance();
+        service.setLostFragment(this);
+        service.retriveLosts();
+       v = inflater.inflate(R.layout.lost_fragment,container,false);
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @SuppressLint("ResourceAsColor")
+    @Override
+    public void updateList(ArrayList<LostChild> lostChildArrayList, boolean flage) {
+        if(flage == true){
+
+            missingChildrenList = new ArrayList<>();
+            missingChildrenList = lostChildArrayList;
+            swipeRefresh = v.findViewById(R.id.refreshID);
+            swipeRefresh.setOnRefreshListener(this);
+            swipeRefresh.setColorSchemeColors(Color.BLUE);
+            swipeRefresh.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            recyclerView = v.findViewById(R.id.recyclerViewID);
+            adapter = new MyAdapter(getActivity(),missingChildrenList);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+           adapter.notifyDataSetChanged();
+           if(swipeRefresh.isRefreshing()){
+               swipeRefresh.setRefreshing(false);
+           }
+        }
+        else{
+
+            Toast.makeText(getContext(),"FaliureCase", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        service =LostChildServiceClient.getInstance();
+        service.setLostFragment(this);
+        service.retriveLosts();
+        Toast.makeText(getContext(),"Refrsh Called", Toast.LENGTH_SHORT).show();
+
     }
 }

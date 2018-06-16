@@ -1,18 +1,37 @@
-package com.iti.jets.lostchildren;
+package com.iti.jets.lostchildren.homeScreen;
 
 /**
  * Created by Ahmed Ali on 6/11/2018.
  */
 
-public class Information {
+public class Informations {
     private  String name ;
     private  String phone ;
-    private  int photo;
-  public  Information(){
+    private  String photo;
 
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    private  String city;
+    private  int age;
+  public Informations(){
 
     }
-    public Information(String name, String phone, int photo) {
+
+    public Informations(String name, String phone, String photo) {
         this.name = name;
         this.phone = phone;
         this.photo = photo;
@@ -34,11 +53,11 @@ public class Information {
         this.phone = phone;
     }
 
-    public int getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(int photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 }
