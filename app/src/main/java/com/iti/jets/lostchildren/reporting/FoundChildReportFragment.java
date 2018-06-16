@@ -79,7 +79,7 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_lost_child_report, container, false);
+        View view = inflater.inflate(R.layout.fragment_found_child_report, container, false);
         service = LostChildServiceClient.getInstance();
         validator = Validator.getInstance();
         validator.setContext(getContext());

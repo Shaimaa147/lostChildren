@@ -1,11 +1,14 @@
 package com.iti.jets.lostchildren.service;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import com.iti.jets.lostchildren.authorizing.AuthFragmentsHome;
+import com.iti.jets.lostchildren.authorizing.SignInFragmentUpdate;
+import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.authorizing.SignUpFragmentUpdate;
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
@@ -14,9 +17,13 @@ import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,23 +36,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LostChildServiceClient {
 
-    private static final String serverIp = "10.0.1.55";
+    private static final String serverIp = "192.168.1.2";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
     public static final String JSON_MSG_NOT_FOUND_EMAIL = "NOT_FOUND";
     public static final String JSON_MSG_SUCCESS = "SUCCESS";
-    public static final String JSON_MSG_FAILED_MSG = "FAILED";
+    public static final String JSON_MSG_FAILED = "FAILED";
 
     private static LostChildServiceClient client;
     private LostChildService service;
     private SignUpFragmentUpdate signUpFragment;
-    private AuthFragmentsHome signInFragment;
+    private SignInFragmentUpdate signInFragment;
     private LostChildReportFragment lostChildReportFragment;
+    private Context context;
 
     private LostChildServiceClient() {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS).build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()).create()).build();
         service = retrofit.create(LostChildService.class);
     }
@@ -60,28 +72,39 @@ public class LostChildServiceClient {
         this.signUpFragment = signUpFragment;
     }
 
-    public void setSignInFragment(AuthFragmentsHome signInFragment) {
+    public void setSignInFragment(SignInFragmentUpdate signInFragment) {
         this.signInFragment = signInFragment;
     }
 
-    public void signIn (String email, String password) {
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void signIn(String email, String password) {
         final HashMap<String, String> userData = new HashMap<String, String>();
-        userData.put("email", email);
-        userData.put("password", password);
+        userData.put(SignUpFragment.EMAIL, email);
+        userData.put(SignUpFragment.PASSWORD, password);
 
         service.signIn(userData).enqueue(new Callback<LogInDataDto>() {
             @Override
             public void onResponse(Call<LogInDataDto> call, Response<LogInDataDto> response) {
-                if(response.code() == 200 && response.body() != null){
-                    Log.i("signin", response.body().getStatus());
-                    signInFragment.redirectToMainActivity(new Gson().toJson(userData));
+                if (response.code() == 200 && response.body() != null) {
+                    Log.i("signin status", response.body().getStatus());
+
+                    if (response.body().getStatus().equals(JSON_MSG_SUCCESS)) {
+                        signInFragment.showInvalidEmailOrPasswordMsg(false);
+                        signInFragment.redirectToMainActivity(new Gson().toJson(userData));
+                    }
+
+                    //TODO: Handle When Wrong Email or Password
+                    else if (response.body().getStatus().equals(JSON_MSG_FAILED))
+                        signInFragment.showInvalidEmailOrPasswordMsg(true);
                 }
             }
 
             @Override
             public void onFailure(Call<LogInDataDto> call, Throwable t) {
                 Log.i("signin", "inc " + t.toString());
-
             }
         });
     }
@@ -91,14 +114,16 @@ public class LostChildServiceClient {
     }
 
     //TODO: Handle network errors
-    public void signUp (final User user) {
+    public void signUp(final User user) {
 
         service.signUp(user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if(response.code() == 200){
-                    String userJson = new Gson().toJson(response.body());
-                    signUpFragment.redirectToMainActivity(userJson);
+                if (response.code() == 200 && response != null) {
+                    if (response.body().getEmail().equals(JSON_MSG_FOUND_EMAIL))
+                        signUpFragment.showDuplicatedEmailErrorMsg(true);
+                    else
+                        signUpFragment.uploadUserImage(response.body());
                 }
             }
 
@@ -112,11 +137,10 @@ public class LostChildServiceClient {
 
     //TODO: Handle network errors
     public void isEmailDuplicated(String email) {
-
         service.isEmailDuplicated(email).enqueue(new Callback<HashMap<String, String>>() {
             @Override
             public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
-                if(response != null && response.code() == 200) {
+                if (response != null && response.code() == 200) {
                     if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FOUND_EMAIL))
                         signUpFragment.showDuplicatedEmailErrorMsg(true);
                     if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_NOT_FOUND_EMAIL))
@@ -131,8 +155,40 @@ public class LostChildServiceClient {
         });
     }
 
+    public void uploadUserImageToServer(final User newUser, File imgFile, Uri imgUri) {
+
+        Log.i("img", context.getContentResolver().getType(imgUri));
+
+        RequestBody emailPart = RequestBody.create(MultipartBody.FORM, newUser.getEmail());
+        RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
+
+        RequestBody imgPart = RequestBody.create(
+                MediaType.parse(context.getContentResolver().getType(imgUri)),
+                imgFile);
+
+        //MultipartBody.Part img = MultipartBody.Part.createFormData("image", imgFile.getName(), imgPart);
+
+        service.uploadUserImage(emailPart, extensionPart, imgPart).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i("img", response.code() + "");
+                Log.i("img", response.body().toString() + "");
+
+                if (response.code() == 200 && response.body() != null) {
+                    signUpFragment.redirectToMainActivity(new Gson().toJson(newUser));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i("img", "Failed " + t.toString());
+
+            }
+        });
+    }
+
     public void reportLost(final LostChild child, String email, MultipartBody.Part image) {
-        
+
 
         service.reportLost(child, email,image).enqueue(new Callback<HashMap<String, String>>() {
             @Override
@@ -142,7 +198,7 @@ public class LostChildServiceClient {
                         Log.i("LostReporting", "report lost status success");
                         lostChildReportFragment.redirectToHome(true);
                     }
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED_MSG)) {
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
                         Log.i("LostReporting", "report lost status failed");
                         lostChildReportFragment.redirectToHome(false);
                     }
@@ -164,7 +220,7 @@ public class LostChildServiceClient {
                 if(response != null && response.code() == 200) {
                     if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS))
                         Log.i("LostReporting", "report found status success");
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED_MSG))
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED))
                         Log.i("LostReporting", "report found status failed");
                 }
             }

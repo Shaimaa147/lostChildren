@@ -1,7 +1,12 @@
 package com.iti.jets.lostchildren.authorizing;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -10,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.iti.jets.lostchildren.MainActivity;
@@ -17,6 +23,8 @@ import com.iti.jets.lostchildren.R;
 
 import com.iti.jets.lostchildren.pojos.User;
 import com.iti.jets.lostchildren.service.*;
+
+import java.io.File;
 
 /**
  * Created by Fadwa on 21/05/2018.
@@ -27,13 +35,14 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     private TextInputLayout firstNameLayout, lastNameLayout, emailLayout,
             passwordLayout, confirmPasswordLayout, addressLayout, phoneNumberLayout;
     private Button btnSignUp, btnGoToSignIn;
+    private ImageView userImgView;
     private LostChildServiceClient service;
     private Validator validator;
-    public static final String FIRST_NAME = "First name";
-    public static final String LAST_NAME = "Last name";
-    public static final String EMAIL = "Email";
-    public static final String PASSWORD = "Password";
-    public static final String PHONE = "PHONE";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+    public static final String EMAIL = "email";
+    public static final String PASSWORD = "password";
+    public static final String PHONE = "phone";
 
     @Nullable
     @Override
@@ -46,9 +55,9 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         passwordLayout = view.findViewById(R.id.txt_signup_password);
         confirmPasswordLayout = view.findViewById(R.id.txt_signup_confirmPassword);
         phoneNumberLayout = view.findViewById(R.id.txt_signup_phone);
+        //userImgView = view.findViewById(R.id.userImgView);
         //TODO: Change address to Google Places
         addressLayout = view.findViewById(R.id.txt_signup_address);
-        //TODO: User Image
 
         btnSignUp = view.findViewById(R.id.btn_signUp);
         btnGoToSignIn = view.findViewById(R.id.btn_goToSignIn);
@@ -166,11 +175,21 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     }
 
     @Override
-    public void showDuplicatedEmailErrorMsg(boolean isDuplicted) {
-        if(isDuplicted)
+    public void showDuplicatedEmailErrorMsg(boolean isDuplicated) {
+        if (isDuplicated)
             emailLayout.setError(getContext().getString(R.string.duplicated_email));
         else
             emailLayout.setError("");
+    }
+
+    @Override
+    public void uploadUserImage(User newUser) {
+        String imgPath = "/storage/emulated/0/pic.jpg";
+        File imgFile = new File(imgPath);
+
+        service.setContext(getActivity().getApplicationContext());
+        Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+        service.uploadUserImageToServer(newUser, imgFile, imgUri);
     }
 
     @Override
@@ -178,5 +197,21 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         Intent i = new Intent(getContext(), MainActivity.class);
         i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
         startActivity(i);
+    }
+
+    private Uri getUriFromPath(String filePath, Context context) {
+        long photoId;
+        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+
+        String[] projection = {MediaStore.Images.ImageColumns._ID};
+        // TODO This will break if we have no matching item in the MediaStore.
+        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        photoId = cursor.getLong(columnIndex);
+
+        cursor.close();
+        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }

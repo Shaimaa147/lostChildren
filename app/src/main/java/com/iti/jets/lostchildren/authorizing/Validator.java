@@ -82,10 +82,11 @@ public class Validator {
         }
 
         else {
-            if(strToValidateType == FIRST_NAME  && !containsLettersOnly(strToValidate))
+            if(strToValidateType.equals(FIRST_NAME)  && !containsLettersOnly(strToValidate))
                 errorMsg = context.getString(R.string.fname) + context.getString(R.string.letters_only);
 
-            else if(strToValidateType == LAST_NAME);
+            else if(strToValidateType.equals(LAST_NAME)  && !containsLettersOnly(strToValidate))
+                errorMsg = context.getString(R.string.lname) + context.getString(R.string.letters_only);
 
             else if(strToValidateType == MOTHER_NAME  && !containsLettersOnly(strToValidate))
                 errorMsg = context.getString(R.string.mname) + context.getString(R.string.letters_only);
