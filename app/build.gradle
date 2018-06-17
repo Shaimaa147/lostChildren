@@ -39,7 +39,7 @@ dependencies {
 //    Shaimaa
     compile 'com.wdullaer:materialdatetimepicker:3.6.0'
 //    Ahmed
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    compile 'com.squareup.picasso:picasso:2.71828'
 //    Islam
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:26.1.0'

@@ -49,12 +49,16 @@ public interface LostChildService {
 
     @Multipart
     @POST("lostReport.json")
-    Call<HashMap<String, String>> reportLost (@Part("child") RequestBody lostChild, @Part("email") RequestBody email,
-                                              @Part("extension") RequestBody extension,
-                                              @Part("image\"; filename=\"pp.png ") RequestBody image);
+    Call<HashMap<String, String>> reportLost (@Part("lost") RequestBody lostChild,
+                                              @Part("email") RequestBody email,
+                                              @Part("image\"; filename=\"lost.png ") RequestBody image,
+                                              @Part("extension") RequestBody extension);
 
+    @Multipart
     @POST("foundReport.json")
-    Call<HashMap<String, String>> reportFound (@Body FoundChild lost, @Query("email") String email,
-                                               @Part("image") MultipartBody.Part image);
+    Call<HashMap<String, String>> reportFound (@Part("found") RequestBody foundChild,
+                                               @Part("email") RequestBody email,
+                                               @Part("image\"; filename=\"lost.png ") RequestBody image,
+                                               @Part("extension") RequestBody extension);
 
 }

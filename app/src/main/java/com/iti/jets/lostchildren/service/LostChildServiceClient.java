@@ -15,6 +15,7 @@ import com.iti.jets.lostchildren.homeScreen.FragmentLost;
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.pojos.User;
+import com.iti.jets.lostchildren.reporting.FoundChildReportFragment;
 import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
 import java.io.File;
 import java.util.ArrayList;
@@ -38,15 +39,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LostChildServiceClient {
 
-
     private static final String serverIp = "192.168.1.3";
-
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
     public static final String JSON_MSG_NOT_FOUND_EMAIL = "NOT_FOUND";
     public static final String JSON_MSG_SUCCESS = "SUCCESS";
     public static final String JSON_MSG_FAILED = "FAILED";
+    public static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
 
 
     private static LostChildServiceClient client;
@@ -62,7 +62,7 @@ public class LostChildServiceClient {
 
 
     private LostChildReportFragment lostChildReportFragment;
-
+    private FoundChildReportFragment foundChildReportFragment;
     private Context context;
 
 
@@ -130,6 +130,10 @@ public class LostChildServiceClient {
 
     public void setLostChildReportFragment(LostChildReportFragment lostChildReportFragment) {
         this.lostChildReportFragment = lostChildReportFragment;
+    }
+
+    public void setFoundChildReportFragment(FoundChildReportFragment foundChildReportFragment) {
+        this.foundChildReportFragment = foundChildReportFragment;
     }
 
     //TODO: Handle network errors
@@ -208,18 +212,16 @@ public class LostChildServiceClient {
 
     public void reportLost(final LostChild child, String email, File imgFile, Uri imgUri) {
 
-        Log.i("img", imgUri.toString());
-        Log.i("img", context.getContentResolver().getType(imgUri));
+        String lostChildJson = new Gson().toJson(child);
         RequestBody emailPart = RequestBody.create(MultipartBody.FORM, email);
-        RequestBody childPart = RequestBody.create(MultipartBody.FORM, child.getFirstName());
+        RequestBody childPart = RequestBody.create(JSON_MEDIA_TYPE, lostChildJson);
         RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
-
         RequestBody imgPart = RequestBody.create(
                 MediaType.parse(context.getContentResolver().getType(imgUri)),
                 imgFile);
 //        RequestBody childPart = RequestBody.create(MediaType.parse("multipart/form-data"), new Gson().toJson(child));
 
-        service.reportLost(childPart, emailPart, extensionPart,imgPart).enqueue(new Callback<HashMap<String, String>>() {
+        service.reportLost(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
             @Override
             public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
                 if(response != null && response.code() == 200) {
@@ -281,16 +283,28 @@ public class LostChildServiceClient {
 
    }
 
-    public void reportFound(final FoundChild child, String email, MultipartBody.Part image) {
+    public void reportFound(final FoundChild child, String email, File imgFile, Uri imgUri) {
 
-        service.reportFound(child, email,image).enqueue(new Callback<HashMap<String, String>>() {
+        String foundChildJson = new Gson().toJson(child);
+        RequestBody emailPart = RequestBody.create(MultipartBody.FORM, email);
+        RequestBody childPart = RequestBody.create(JSON_MEDIA_TYPE, foundChildJson);
+        RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
+        RequestBody imgPart = RequestBody.create(
+                MediaType.parse(context.getContentResolver().getType(imgUri)),
+                imgFile);
+
+        service.reportFound(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
             @Override
             public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
                 if(response != null && response.code() == 200) {
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS))
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS)) {
                         Log.i("LostReporting", "report found status success");
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED))
+                        foundChildReportFragment.redirectToHome(true);
+                    }
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
                         Log.i("LostReporting", "report found status failed");
+                        foundChildReportFragment.redirectToHome(false);
+                    }
                 }
             }
 

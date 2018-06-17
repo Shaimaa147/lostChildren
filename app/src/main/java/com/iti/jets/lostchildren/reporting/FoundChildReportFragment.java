@@ -1,7 +1,11 @@
 package com.iti.jets.lostchildren.reporting;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -29,6 +33,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 //import com.iti.jets.lostchildren.MainActivity;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.authorizing.Validator;
+import com.iti.jets.lostchildren.homeScreen.MainActivity;
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
@@ -36,6 +41,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import static com.iti.jets.lostchildren.authorizing.SignUpFragment.*;
 import static com.iti.jets.lostchildren.reporting.LostChildReportFragment.MOTHER_NAME;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -80,6 +86,26 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_found_child_report, container, false);
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        currentLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.currentLocation);
+        findingLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.foundLocation);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext()).addApi(Places.GEO_DATA_API)
+                .enableAutoManage(getActivity(), GOOGLE_API_CLIENT_ID, this).addConnectionCallbacks(this).build();
+        currentLocation.setThreshold(3);
+        findingLocation.setThreshold(3);
+        currentLocation.setOnItemClickListener(mAutocompleteClickListener);
+        findingLocation.setOnItemClickListener(mAutocompleteClickListener);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
+        currentLocation.setAdapter(mPlaceArrayAdapter);
+        findingLocation.setAdapter(mPlaceArrayAdapter);
+
         service = LostChildServiceClient.getInstance();
         validator = Validator.getInstance();
         validator.setContext(getContext());
@@ -130,6 +156,12 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
         genderRadioGroup.check(maleRadioBtn.getId());
 
         dateBtn = (Button) getActivity().findViewById(R.id.dateBtn);
+        dateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDate(v);
+            }
+        });
         reportBtn = (Button) getActivity().findViewById(R.id.reportBtn);
         reportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,8 +169,12 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                 firstNameWraapper.setError(validator.validateField(FIRST_NAME, firstNameWraapper));
                 lastNameWrapper.setError(validator.validateField(LAST_NAME, lastNameWrapper));
                 motherNameWrapper.setError(validator.validateField(MOTHER_NAME, motherNameWrapper));
-                
+
                 // add image
+                String imgPath = "/storage/sdcard0/pictures/ww.jpg";
+                File imgFile = new File(imgPath);
+                Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+                //
                 if (firstNameWraapper.getError() == "" && lastNameWrapper.getError() == "" &&
                         fromAgeWrapper.getError() == "" && toAgeWrapper.getError() == "") {
                     FoundChild child = new FoundChild();
@@ -160,30 +196,12 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                         child.setFoundLocation(findingLocation.getText().toString());
                     if(!currentLocation.getText().toString().equals(""))
                         child.setCurrentLocation(currentLocation.getText().toString());
-
-//                    service.reportFound(child, MainActivity.currentUser.getEmail(), );
+                    child.setReturned("no");
+                    service.setContext(getActivity().getApplicationContext());
+                    service.reportFound(child, MainActivity.currentUser.getEmail(), imgFile, imgUri);
                 }
             }
         });
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        currentLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.currentLocation);
-        findingLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.foundLocation);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext()).addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(), GOOGLE_API_CLIENT_ID, this).addConnectionCallbacks(this).build();
-        currentLocation.setThreshold(3);
-        findingLocation.setThreshold(3);
-        currentLocation.setOnItemClickListener(mAutocompleteClickListener);
-        findingLocation.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
-        currentLocation.setAdapter(mPlaceArrayAdapter);
-        findingLocation.setAdapter(mPlaceArrayAdapter);
     }
 
     /*place*/
@@ -277,10 +295,28 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
 
         if(didSuccess) {
             Toast.makeText(getContext(), "Report has been saved successfully.", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(getContext(), MainActivity.class);
+            startActivity(i);
         }
         else {
             Toast.makeText(getContext(), "Report saving failed ........", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private Uri getUriFromPath(String filePath, Context context) {
+        long photoId;
+        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+
+        String[] projection = {MediaStore.Images.ImageColumns._ID};
+        // TODO This will break if we have no matching item in the MediaStore.
+        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        photoId = cursor.getLong(columnIndex);
+
+        cursor.close();
+        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }
