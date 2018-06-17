@@ -30,9 +30,10 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.iti.jets.lostchildren.MainActivity;
+//import com.iti.jets.lostchildren.MainActivity;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.authorizing.Validator;
+import com.iti.jets.lostchildren.homeScreen.MainActivity;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -196,8 +197,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                         child.setLostLocation(lostLocation.getText().toString());
                     if(!originalAddress.getText().toString().equals(""))
                         child.setOrginalAddress(originalAddress.getText().toString());
-                    // SET Return
-                    child.setReturned(false);
+                    child.setReturned("no");
                     service.setContext(getActivity().getApplicationContext());
 //                    service.setLostChildReportFragment(LostChildReportFragment.this);
                     service.reportLost(child, MainActivity.currentUser.getEmail(), imgFile, imgUri);

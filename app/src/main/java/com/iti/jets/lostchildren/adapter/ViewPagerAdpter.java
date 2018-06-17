@@ -1,4 +1,4 @@
-package com.iti.jets.lostchildren;
+package com.iti.jets.lostchildren.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +21,11 @@ public class ViewPagerAdpter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return lstFragment.get(position);
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return super.getItemPosition(object);
     }
 
     @Override

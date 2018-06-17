@@ -1,7 +1,9 @@
-package com.iti.jets.lostchildren;
+package com.iti.jets.lostchildren.adapter;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.iti.jets.lostchildren.homeScreen.Informations;
+import com.iti.jets.lostchildren.R;
+import com.iti.jets.lostchildren.pojos.FoundChild;
+import com.iti.jets.lostchildren.pojos.LostChild;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,12 +30,15 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private LayoutInflater inflater ;
     Context context;
-    List<Information> data = Collections.emptyList();
-    public MyAdapter(Context context, List<Information> data){
+    List<LostChild> data = Collections.emptyList();
+    public MyAdapter(Context context, ArrayList<LostChild> data ){
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.data = data;
+
     }
+
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,9 +55,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Information current = data.get(position);
-        holder.lostName.setText(current.getName());
-        holder.img.setImageResource(current.getPhoto());
+        LostChild current = data.get(position);
+        holder.lostName.setText(current.getFirstName()+" "+current.getLastName() );
+      holder.age.setText(current.getAge().toString());
+     holder.city.setText(current.getOrginalAddress().toString());
+     holder.reporter.setText(" "+current.getLostUserId().getLastName().toString());
+     Log.i("name",current.getLostUserId().getLastName().toString());
+        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.img);
+
     }
 
     @Override
@@ -55,15 +72,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public  class  MyViewHolder extends  RecyclerView.ViewHolder{
         private ImageView img ;
         private TextView lostName;
-        private TextView phoneNumber;
+        private TextView age;
+        private TextView city;
+        private TextView reportBy;
+        private  TextView reporter;
         private LinearLayout customItem;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgID);
             lostName = itemView.findViewById(R.id.textOneID);
-            phoneNumber = itemView.findViewById(R.id.textTwoID);
+            age = itemView.findViewById(R.id.textTwoID);
+            city = itemView.findViewById(R.id.textThreeID);
+            reportBy = itemView.findViewById(R.id.reportByID);
+            reporter = itemView.findViewById(R.id.reporterID);
             customItem = itemView.findViewById(R.id.itemID);
+
         }
     }
 }

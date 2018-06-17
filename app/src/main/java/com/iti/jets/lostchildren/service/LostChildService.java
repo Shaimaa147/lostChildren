@@ -4,6 +4,7 @@ import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.pojos.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import okhttp3.MultipartBody;
@@ -41,6 +42,10 @@ public interface LostChildService {
             @Part("extension") RequestBody extension,
             @Part("userImage\"; filename=\"pp.png ") RequestBody userImage
     );
+   @GET("lostRetrieve.json")
+   Call<ArrayList<LostChild>> retriveLost();
+   @GET("foundRetrieve.json")
+   Call<ArrayList<FoundChild>> retriveFound();
 
     @Multipart
     @POST("lostReport.json")

@@ -30,9 +30,10 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.iti.jets.lostchildren.MainActivity;
+//import com.iti.jets.lostchildren.MainActivity;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.authorizing.Validator;
+import com.iti.jets.lostchildren.homeScreen.MainActivity;
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
@@ -195,8 +196,7 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                         child.setFoundLocation(findingLocation.getText().toString());
                     if(!currentLocation.getText().toString().equals(""))
                         child.setCurrentLocation(currentLocation.getText().toString());
-                    // SET Return
-                    child.setReturned(false);
+                    child.setReturned("no");
                     service.setContext(getActivity().getApplicationContext());
                     service.reportFound(child, MainActivity.currentUser.getEmail(), imgFile, imgUri);
                 }
