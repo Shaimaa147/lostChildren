@@ -49,11 +49,11 @@ public class FragmentFound extends android.support.v4.app.Fragment implements Re
 
 
     @Override
-    public void updateList(ArrayList<FoundChild> foundChildrenList, Boolean flag) {
+    public void updateList(ArrayList<FoundChild> foundChildrenList1, Boolean flag) {
         if(flag == true){
 
             foundChildrenList = new ArrayList<>();
-            foundChildrenList = foundChildrenList;
+            foundChildrenList = foundChildrenList1;
             swipeRefresh = v.findViewById(R.id.refreshFoundID);
             swipeRefresh.setOnRefreshListener(this);
             swipeRefresh.setColorSchemeColors(Color.BLUE);
