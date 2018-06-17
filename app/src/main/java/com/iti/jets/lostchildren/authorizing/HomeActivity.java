@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.reporting.FoundChildReportFragment;
 import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
+import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 /**
  * Created by Fadwa on 23/05/2018.
@@ -40,10 +41,12 @@ public class HomeActivity extends AppCompatActivity {
         switch (fragmentTag){
             case LOST_TAG:
                 currentFragment = new LostChildReportFragment();
+                LostChildServiceClient.getInstance().setLostChildReportFragment((LostChildReportFragment) currentFragment);
                 currentFragmentTag = LOST_TAG;
                 break;
             case FOUND_TAG:
                 currentFragment = new FoundChildReportFragment();
+                LostChildServiceClient.getInstance().setFoundChildReportFragment((FoundChildReportFragment) currentFragment);
                 currentFragmentTag = FOUND_TAG;
                 break;
             default:

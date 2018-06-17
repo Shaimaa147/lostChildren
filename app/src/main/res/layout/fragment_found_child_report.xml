@@ -330,7 +330,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:onClick="setDate"
             android:text="select date"
             app:layout_constraintBaseline_toBaselineOf="@+id/dateTextView"
             app:layout_constraintHorizontal_bias="0.888"

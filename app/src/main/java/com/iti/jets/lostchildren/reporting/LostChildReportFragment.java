@@ -171,7 +171,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                 phoneWrapper.setError(validator.validateField(PHONE, phoneWrapper));
 
                 // add image
-                String imgPath = "/storage/sdcard0/Pictures/Woods.jpg";
+                String imgPath = "/storage/sdcard0/pictures/ww.jpg";
                 File imgFile = new File(imgPath);
                 Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
                 //
@@ -196,12 +196,10 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                         child.setLostLocation(lostLocation.getText().toString());
                     if(!originalAddress.getText().toString().equals(""))
                         child.setOrginalAddress(originalAddress.getText().toString());
-                    child.setImageUrl(imgUri);
-                    Log.i("LostFragment","//////////////////////////////"+ imgUri.toString());
-                    Log.i("LostFragment", imgFile.toString());
-                    Log.i("LostFragment",MainActivity.currentUser.getEmail().toString());
+                    // SET Return
+                    child.setReturned(false);
                     service.setContext(getActivity().getApplicationContext());
-                    service.setLostChildReportFragment(LostChildReportFragment.this);
+//                    service.setLostChildReportFragment(LostChildReportFragment.this);
                     service.reportLost(child, MainActivity.currentUser.getEmail(), imgFile, imgUri);
                 }
             }
@@ -268,9 +266,6 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
 
 
     public void setDate(View view) {
-//        getActivity().showDialog(999);
-//        dateBtn.setText(new StringBuilder().append(day).append("/")
-//                .append(month).append("/").append(year));
         calendar = Calendar.getInstance();
         DatePickerDialog dpd = DatePickerDialog.newInstance(
                 LostChildReportFragment.this,
@@ -303,21 +298,14 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
 
         if(didSuccess) {
             Toast.makeText(getContext(), "Report has been saved successfully.", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(getContext(), MainActivity.class);
+            startActivity(i);
         }
         else {
             Toast.makeText(getContext(), "Report saving failed ........", Toast.LENGTH_LONG).show();
         }
 
-//        Intent i = new Intent(getContext(), MainActivity.class);
-//        i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
-//        startActivity(i);
 
-//        Fragment fragment = new tasks();
-//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.content_frame, fragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
     }
 
     private Uri getUriFromPath(String filePath, Context context) {
