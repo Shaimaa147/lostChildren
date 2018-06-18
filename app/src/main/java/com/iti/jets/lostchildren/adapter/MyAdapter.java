@@ -37,7 +37,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.data = data;
-
     }
 
 
