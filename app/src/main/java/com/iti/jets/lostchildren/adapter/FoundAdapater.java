@@ -24,6 +24,8 @@ import java.util.List;
  */
 
 public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewHolder> {
+    public static  final String imgeURL = "http://192.168.1.3:8084/LostChildren/found_images/";
+    public  static  final  String userImageURL = "http://192.168.1.3:8084/LostChildren/users_images/";
     private LayoutInflater inflater ;
     List<FoundChild> data = Collections.emptyList();
     Context context;
@@ -54,8 +56,8 @@ public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewH
         holder.age.setText(current.getFromAge().toString() + " To " + current.getToAge().toString());
         holder.city.setText(current.getCurrentLocation().toString());
         holder.reporter.setText(" "+current.getFoundUserId().getLastName().toString());
-        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.img);
-
+        Picasso.get().load(imgeURL+current.getImageUrl()).placeholder(R.drawable.two).into(holder.img);
+        Picasso.get().load(userImageURL+current.getFoundUserId().getImageUrl()).placeholder(R.drawable.one).into(holder.imgBy);
 
     }
 
@@ -66,6 +68,7 @@ public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewH
 
     public  class  FoundViewHolder extends  RecyclerView.ViewHolder{
         private ImageView img ;
+        private ImageView imgBy;
         private TextView lostName;
         private TextView age;
         private TextView city;
@@ -76,12 +79,14 @@ public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewH
         public FoundViewHolder(View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgID);
+            imgBy = itemView.findViewById(R.id.reportByImgID);
             lostName = itemView.findViewById(R.id.textOneID);
             age = itemView.findViewById(R.id.textTwoID);
             city = itemView.findViewById(R.id.textThreeID);
             reportBy = itemView.findViewById(R.id.reportByID);
             reporter = itemView.findViewById(R.id.reporterID);
             customItem = itemView.findViewById(R.id.itemID);
+
 
         }
     }
