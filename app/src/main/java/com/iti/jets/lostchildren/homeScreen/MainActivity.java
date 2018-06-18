@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -26,6 +27,8 @@ import com.iti.jets.lostchildren.adapter.ViewPagerAdpter;
 import com.iti.jets.lostchildren.authorizing.HomeActivity;
 import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.pojos.User;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 
 public class MainActivity extends AppCompatActivity
@@ -99,6 +102,8 @@ public class MainActivity extends AppCompatActivity
             if (userImgUrl == null) {
                 sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
                 //TODO: Cache user image using Picasso
+                Toast.makeText(getApplicationContext(), userImgUrl, LENGTH_LONG).show();
+//                http://localhost:8084/LostChildren/users_images/ahmed.zagh@gmail.com.jpeg
             }
 
             sharedPrefEditor.commit();

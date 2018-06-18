@@ -52,8 +52,8 @@ public class SignInFragment extends Fragment implements SignInFragmentUpdate {
                 passwordLayout.setError("");
 
 //                if (isEmailValid && isPasswordValid) {
-//                    service.setSignInFragment(SignInFragment.this);
-//                    service.signIn(email, password);
+                    service.setSignInFragment(SignInFragment.this);
+                    service.signIn(email, password);
 //                }
 //                else {
 //                    if (isPasswordValid)
