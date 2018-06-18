@@ -25,6 +25,16 @@ public class Validator {
 
     private Context context;
     private static Validator validator;
+    private final static String MIN_LENGTH = "min";
+    private final static String MAX_LENGTH = "max";
+
+    public static final int minPasswordLength = 6;
+    public static final int maxPasswordLength = 30;
+    public static final int maxNameLength = 20;
+    public static final int maxEmailLength = 100;
+    public static final int maxAddressLength = 200;
+    public static final int phoneLength = 11;
+    public static final int maxAge = 99;
 
     private Validator() {}
 
@@ -39,7 +49,7 @@ public class Validator {
     }
 
     //TODO: Double Check The Pattern
-    public boolean validateEmailFormat(String email) {
+    private boolean validateEmailFormat(String email) {
         final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher;
@@ -47,20 +57,67 @@ public class Validator {
         return matcher.matches();
     }
 
-    public boolean validateLength(String strToValidate, int minLength){
-        if(strToValidate.length() >= minLength)
+    private boolean validateLength(String lengthTypeToCheck, String strToValidate, int length){
+
+        if(lengthTypeToCheck.equals(MIN_LENGTH) && strToValidate.length() >= length)
+            return true;
+        else if(lengthTypeToCheck.equals(MAX_LENGTH) && strToValidate.length() <= length)
             return true;
         return false;
     }
 
-    //First Name, Last Name, Phone, Password,AGE Validation
-    //TODO: Validate Max Length (DataBase)
+    private String validateName(String type, String name) {
+        String errorMsg = "";
+        switch (type) {
+            case FIRST_NAME:
+                errorMsg = context.getString(R.string.fname);
+                break;
+            case LAST_NAME:
+                errorMsg = context.getString(R.string.lname);
+                break;
+            case MOTHER_NAME:
+                errorMsg = context.getString(R.string.mname);
+                break;
+        }
+
+        if(!containsLettersOnly(name))
+            errorMsg += context.getString(R.string.letters_only);
+        else if(!validateLength(MAX_LENGTH, name, maxNameLength))
+            errorMsg += context.getString(R.string.is_too_long);
+        else
+            errorMsg = "";
+
+        return errorMsg;
+    }
+
+    private String validatePassword(String password){
+        String errorMsg = "";
+        if(password.contains(" "))
+            errorMsg = context.getString(R.string.password) + context.getString(R.string.contains_spaces);
+        else if(!validateLength(MIN_LENGTH, password, minPasswordLength))
+            errorMsg = context.getString(R.string.short_password);
+        else if(!validateLength(MAX_LENGTH, password, maxPasswordLength))
+            errorMsg = context.getString(R.string.password) + context.getString(R.string.is_too_long);;
+        return errorMsg;
+    }
+
+    private String validatePhone(String phone) {
+        String errorMsg = "";
+        if(!TextUtils.isDigitsOnly(phone)
+                || phone.length() != phoneLength
+                || phone.charAt(0) != '0'
+                || phone.charAt(1)!= '1')
+            errorMsg = context.getString(R.string.invalid_phone_number);
+        return errorMsg;
+
+    }
+
+    //First Name, Last Name, Phone, Password, AGE Validation
     public String validateField(String strToValidateType, TextInputLayout layoutToValidate) {
         String errorMsg = "";
-        //TODO: Handle Spaces
-        String strToValidate = layoutToValidate.getEditText().getText().toString().trim();
+        String strToValidate = layoutToValidate.getEditText().getText().toString();
 
-        if(strToValidate.isEmpty() && !strToValidateType.equals(PHONE) ){
+        if(strToValidate.isEmpty() && !strToValidateType.equals(PHONE) && !strToValidate.equals(MOTHER_NAME)){
             switch (strToValidateType){
                 case FIRST_NAME:
                     errorMsg = context.getString(R.string.fname);
@@ -82,24 +139,21 @@ public class Validator {
         }
 
         else {
-            if(strToValidateType.equals(FIRST_NAME)  && !containsLettersOnly(strToValidate))
-                errorMsg = context.getString(R.string.fname) + context.getString(R.string.letters_only);
+            if(strToValidateType.equals(FIRST_NAME)
+                    || strToValidateType.equals(LAST_NAME)
+                    || strToValidateType.equals(MOTHER_NAME))
+                errorMsg = validateName(strToValidateType, strToValidate);
 
-            else if(strToValidateType.equals(LAST_NAME)  && !containsLettersOnly(strToValidate))
-                errorMsg = context.getString(R.string.lname) + context.getString(R.string.letters_only);
+            else if(strToValidateType == PASSWORD)
+                errorMsg = validatePassword(strToValidate);
 
-            else if(strToValidateType == MOTHER_NAME  && !containsLettersOnly(strToValidate))
-                errorMsg = context.getString(R.string.mname) + context.getString(R.string.letters_only);
-
-            else if(strToValidateType == PASSWORD && !validateLength(strToValidate, HomeActivity.minPasswordLength))
-                errorMsg = context.getString(R.string.short_password);
-
-            else if((strToValidateType == PHONE || strToValidateType.equals(Reporter_PHONE))
-                    && !TextUtils.isDigitsOnly(strToValidate))
-                errorMsg = context.getString(R.string.invalid_phone_number);
+            else if((strToValidateType == PHONE || strToValidateType.equals(Reporter_PHONE)))
+                errorMsg = validatePhone(strToValidate);
 
             else if((strToValidateType.equals(AGE) || strToValidateType.equals(FROMAGE) || strToValidateType.equals(TOAGE))
-                    && !TextUtils.isDigitsOnly(strToValidate) && Integer.parseInt(strToValidate) > 0)
+                    && !TextUtils.isDigitsOnly(strToValidate)
+                    && Integer.parseInt(strToValidate) > 0
+                    && Integer.parseInt(strToValidate) >= maxAge)
                 errorMsg = context.getString(R.string.invalid_age);
         }
         return errorMsg;
@@ -115,8 +169,7 @@ public class Validator {
 
 
     //Email Validation
-    //TODO: Validate Max Length (DataBase)
-    public String validateField(SignUpFragment signUpFragment, TextInputLayout layoutToValidate) {
+    public String validateField(TextInputLayout layoutToValidate) {
         String errorMsg = "";
         String strToValidate = layoutToValidate.getEditText().getText().toString().trim();
 
@@ -124,10 +177,11 @@ public class Validator {
             errorMsg = context.getString(R.string.email) + context.getString(R.string.is_required);
         else if (!validateEmailFormat(strToValidate))
             errorMsg = context.getString(R.string.invalid_email);
-        else {
-            LostChildServiceClient.getInstance().setSignUpFragment(signUpFragment);
-            LostChildServiceClient.getInstance().isEmailDuplicated(strToValidate);
-        }
+        else if(validateLength(MAX_LENGTH, strToValidate, maxEmailLength)) ;
+//        else {
+//            LostChildServiceClient.getInstance().setSignUpFragment(signUpFragment);
+//            LostChildServiceClient.getInstance().isEmailDuplicated(strToValidate);
+//        }
 
         return errorMsg;
     }

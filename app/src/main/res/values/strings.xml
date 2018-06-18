@@ -25,9 +25,18 @@
     <string name="invalid_password_confirmation">Password confirmation doesn\'t match Password</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="short_password">Password should be at least 6 characters</string>
+    <string name="contains_spaces">&#160;shouldn\'t contain spaces</string>
     <string name="is_required">&#160;is required</string>
     <string name="letters_only">&#160;should contain letters only</string>
+    <string name="is_too_long">&#160;is too long</string>
 
+    <!--NavigationDrawer-->
+    <string name="home">Home</string>
+    <string name="report_lost">Report Lost Child</string>
+    <string name="report_found">Report Found Child</string>
+    <string name="search_children">Search Children</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Log Out</string>
 
     <!--Shaimaa-->
     <string name="mname">Mother Name</string>

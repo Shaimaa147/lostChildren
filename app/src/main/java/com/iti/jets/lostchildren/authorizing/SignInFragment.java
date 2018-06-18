@@ -45,27 +45,27 @@ public class SignInFragment extends Fragment implements SignInFragmentUpdate {
             public void onClick(View v) {
                 String email = emailLayout.getEditText().getText().toString();
                 String password = passwordLayout.getEditText().getText().toString();
-                boolean isEmailValid = validator.validateEmailFormat(email);
-                boolean isPasswordValid = validator.validateLength(password, HomeActivity.minPasswordLength);
+//                boolean isEmailValid = validator.validateEmailFormat(email);
+//                boolean isPasswordValid = validator.validateLength(password, HomeActivity.minPasswordLength);
 
                 emailLayout.setError("");
                 passwordLayout.setError("");
 
-                if (isEmailValid && isPasswordValid) {
-                    service.setSignInFragment(SignInFragment.this);
-                    service.signIn(email, password);
-                }
-                else {
-                    if (isPasswordValid)
-                        passwordLayout.setError("");
-                    else
-                        passwordLayout.setError("Short password");
-
-                    if (isEmailValid)
-                        emailLayout.setError("");
-                    else
-                        emailLayout.setError("Invalid Email Format");
-                }
+//                if (isEmailValid && isPasswordValid) {
+//                    service.setSignInFragment(SignInFragment.this);
+//                    service.signIn(email, password);
+//                }
+//                else {
+//                    if (isPasswordValid)
+//                        passwordLayout.setError("");
+//                    else
+//                        passwordLayout.setError("Short password");
+//
+//                    if (isEmailValid)
+//                        emailLayout.setError("");
+//                    else
+//                        emailLayout.setError("Invalid Email Format");
+//                }
             }
         });
 
