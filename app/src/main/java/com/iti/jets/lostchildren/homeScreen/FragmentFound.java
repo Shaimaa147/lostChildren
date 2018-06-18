@@ -27,6 +27,7 @@ import java.util.ArrayList;
  */
 
 public class FragmentFound extends android.support.v4.app.Fragment implements RetriveFoundChildren, SwipeRefreshLayout.OnRefreshListener {
+
     private ArrayList<FoundChild>foundChildrenList;
     private RecyclerView recyclerView ;
     private FoundAdapater adapter ;

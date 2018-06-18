@@ -27,7 +27,8 @@ public class Informations {
 
     private  String city;
     private  int age;
-  public Informations(){
+
+    public Informations(){
 
     }
 

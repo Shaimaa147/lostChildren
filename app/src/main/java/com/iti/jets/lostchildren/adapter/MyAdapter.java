@@ -1,7 +1,10 @@
 package com.iti.jets.lostchildren.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.iti.jets.lostchildren.authorizing.HomeActivity;
+import com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment;
 import com.iti.jets.lostchildren.homeScreen.Informations;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.pojos.FoundChild;
@@ -22,6 +28,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.CHILD_JSON;
+import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.CHILD_TYPE;
+import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.LOST_CHILD;
 
 /**
  * Created by Ahmed Ali on 6/11/2018.
@@ -47,6 +57,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.customItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                ChildDetailsFragment detailsFragment = new ChildDetailsFragment();
+                LostChild child = data.get(holder.getAdapterPosition());
+                String childJson = new Gson().toJson(child);
+                Bundle bundle = new Bundle();
+                bundle.putString(CHILD_JSON, childJson);
+                bundle.putString(CHILD_TYPE, LOST_CHILD);
+                detailsFragment.setArguments(bundle);
+
+                Intent i = new Intent(context, HomeActivity.class);
+                i.putExtra(HomeActivity.REQUIRED_FREGMENT, "details");
+                i.putExtra(CHILD_JSON, childJson);
+                i.putExtra(CHILD_TYPE, LOST_CHILD);
+                context.startActivity(i);
+//                AppCompatActivity currentActivity = (AppCompatActivity) view.getContext();
+//                currentActivity.getSupportFragmentManager().beginTransaction().replace(R.id.home_fragment_layout,
+//                        detailsFragment, "details").commit();
                 Toast.makeText(context, "TestClick"+String.valueOf(holder.getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
         });
