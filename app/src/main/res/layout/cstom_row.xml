@@ -34,7 +34,7 @@
         <ImageView
             android:layout_gravity="end"
             android:layout_width="25dp"
-            android:layout_height="25dp" android:src="@mipmap/ic_launcher_round" />
+            android:layout_height="25dp" android:src="@mipmap/ic_launcher_round" android:id="@+id/reportByImgID" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:orientation="horizontal" android:gravity="end"
