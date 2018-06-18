@@ -38,6 +38,8 @@ import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.LOST_CHI
  */
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    public static  final String imgeURL = "http://192.168.1.3:8084/LostChildren/lost_images/";
+    public  static  final  String userImageURL = "http://192.168.1.3:8084/LostChildren/users_images/";
     private LayoutInflater inflater ;
     Context context;
     List<LostChild> data = Collections.emptyList();
@@ -87,8 +89,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
       holder.age.setText(current.getAge().toString());
      holder.city.setText(current.getOrginalAddress().toString());
      holder.reporter.setText(" "+current.getLostUserId().getLastName().toString());
-     Log.i("name",current.getLostUserId().getLastName().toString());
-        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.img);
+     //Log.i("name","http://localhost:8084/LostChildren/lost_images/"+current.getImageUrl());
+        //Picasso.get().load("http://localhost:8084/LostChildren/found_images/"+current.getImageUrl()).placeholder().into(holder.img);
+        Picasso.get().load(imgeURL+current.getImageUrl()).placeholder(R.drawable.one).into(holder.img);
+        Picasso.get().load(userImageURL+current.getLostUserId().getImageUrl()).placeholder(R.drawable.two).into(holder.imgBy);
 
     }
 
@@ -98,6 +102,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
     public  class  MyViewHolder extends  RecyclerView.ViewHolder{
         private ImageView img ;
+        private ImageView imgBy;
         private TextView lostName;
         private TextView age;
         private TextView city;
@@ -108,6 +113,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public MyViewHolder(View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.imgID);
+            imgBy = itemView.findViewById(R.id.reportByImgID);
             lostName = itemView.findViewById(R.id.textOneID);
             age = itemView.findViewById(R.id.textTwoID);
             city = itemView.findViewById(R.id.textThreeID);
