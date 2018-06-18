@@ -1,8 +1,9 @@
 package com.iti.jets.lostchildren.homeScreen;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -23,8 +24,8 @@ import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.adapter.ViewPagerAdpter;
 
 import com.iti.jets.lostchildren.authorizing.HomeActivity;
+import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.pojos.User;
-import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -32,8 +33,14 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tableLayout ;
     private ViewPager viewPager;
     private ViewPagerAdpter adpter;
+    private String userAddress;
+    private String userPhone;
+    private String userImgUrl;
+    private SharedPreferences userSharedPref;
+    private SharedPreferences.Editor sharedPrefEditor;
 
     public static final String LOGGED_IN_USER_JSON = "loggedInUserJson";
+    public static final String USER_SHARED_PREF = "userSharedPref";
     public static User currentUser;
 
     @Override
@@ -72,7 +79,30 @@ public class MainActivity extends AppCompatActivity
         currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
         //Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
 
-        //TODO: Save to shared preferences
+        userSharedPref = getSharedPreferences(USER_SHARED_PREF, Context.MODE_PRIVATE);
+        if(userSharedPref == null) {
+            sharedPrefEditor = userSharedPref.edit();
+            sharedPrefEditor.putString(SignUpFragment.FIRST_NAME, currentUser.getFirstName().toString());
+            sharedPrefEditor.putString(SignUpFragment.LAST_NAME, currentUser.getLastName().toString());
+            sharedPrefEditor.putString(SignUpFragment.EMAIL, currentUser.getEmail().toString());
+            sharedPrefEditor.putString(SignUpFragment.PASSWORD, currentUser.getPassword().toString());
+
+            userAddress = currentUser.getAddress().toString();
+            if (userAddress != null)
+                sharedPrefEditor.putString(SignUpFragment.ADDRESS, userAddress);
+
+            userPhone = currentUser.getPhone().toString();
+            if (userPhone != null)
+                sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
+
+            userImgUrl = currentUser.getImageUrl().toString();
+            if (userImgUrl == null) {
+                sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
+                //TODO: Cache user image using Picasso
+            }
+
+            sharedPrefEditor.commit();
+        }
 
     }
 
@@ -116,16 +146,21 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.Home) {
             // Handle the home action
+            //TODO: Redirect to Home
         } else if (id == R.id.reportLost) {
             redirectToMainActivity(HomeActivity.LOST_TAG);
+
         } else if (id == R.id.reportFound) {
             redirectToMainActivity(HomeActivity.FOUND_TAG);
-        } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.search) {
+            //TODO: Redirect to Search
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.profile) {
+            //TODO: Redirect to Profile
 
+        } else if (id == R.id.logout) {
+            //TODO: Redirect to SignIn and clear sharedPref
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

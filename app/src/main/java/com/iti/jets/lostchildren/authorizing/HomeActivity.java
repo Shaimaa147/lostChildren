@@ -26,7 +26,6 @@ public class HomeActivity extends AppCompatActivity {
     public static final String LOST_TAG = "Lost";
     public static final String FOUND_TAG = "Found";
 
-    public static final int minPasswordLength = 6;
     SignInFragment signInFragment;
     Fragment currentFragment;
     String currentFragmentTag;
