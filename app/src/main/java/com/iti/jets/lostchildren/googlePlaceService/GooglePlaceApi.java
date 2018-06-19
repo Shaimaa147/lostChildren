@@ -30,7 +30,7 @@ public class GooglePlaceApi implements GoogleApiClient.OnConnectionFailedListene
     private PlaceArrayAdapter mPlaceArrayAdapter;
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private static Context context;
-    private static final String LOG_TAG = "LostChildFragmment";
+    private static final String LOG_TAG = "GOOglePlaceApiClass";
 
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW =
             new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));

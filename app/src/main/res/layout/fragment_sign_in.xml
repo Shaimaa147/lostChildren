@@ -51,6 +51,14 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
+                android:text="@string/wrong_signin_data"
+                android:textColor="@color/errorColor"
+                android:visibility="invisible"
+                android:id="@+id/errorMsg"/>
 
             <Button
                 android:id="@+id/btn_signin"
@@ -75,15 +83,6 @@
                 android:background="@android:color/white"
                 android:text="@string/sign_up"
                 android:textAllCaps="false" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
-                android:text="@string/wrong_signin_data"
-                android:textColor="@color/errorColor"
-                android:visibility="invisible"
-                android:id="@+id/errorMsg"/>
 
         </LinearLayout>
     </ScrollView>

@@ -39,6 +39,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
     public static final String AGE = "Age";
     public static final String Reporter_PHONE = "Reporter Phone";
     public static final String MOTHER_NAME = "Mother name";
+    public static final int maxChildAge = 99;
     /*Place*/
     private AutoCompleteTextView originalAddress;
     private AutoCompleteTextView lostLocation;

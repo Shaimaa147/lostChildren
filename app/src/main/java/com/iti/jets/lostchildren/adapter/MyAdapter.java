@@ -85,10 +85,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         LostChild current = data.get(position);
+        Log.i("home",current.getOrginalAddress().toString());
         holder.lostName.setText(current.getFirstName()+" "+current.getLastName() );
       holder.age.setText(current.getAge().toString());
-     holder.city.setText(current.getOrginalAddress().toString());
-     holder.reporter.setText(" "+current.getLostUserId().getLastName().toString());
+   //  holder.city.setText(current.getOrginalAddress().toString());
+    holder.reporter.setText(" "+current.getLostUserId().getLastName().toString());
      //Log.i("name","http://localhost:8084/LostChildren/lost_images/"+current.getImageUrl());
         //Picasso.get().load("http://localhost:8084/LostChildren/found_images/"+current.getImageUrl()).placeholder().into(holder.img);
         Picasso.get().load(imgeURL+current.getImageUrl()).placeholder(R.drawable.one).into(holder.img);

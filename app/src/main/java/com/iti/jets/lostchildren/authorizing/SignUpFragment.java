@@ -32,8 +32,10 @@ import java.io.File;
 
 public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
 
+    //TODO: Address (Google Place) Validation
+    //TODO: User Image
     private TextInputLayout firstNameLayout, lastNameLayout, emailLayout,
-            passwordLayout, confirmPasswordLayout, addressLayout, phoneNumberLayout;
+            passwordLayout, confirmPasswordLayout, phoneNumberLayout;
     private Button btnSignUp, btnGoToSignIn;
     private ImageView userImgView;
     private AutoCompleteTextView addressTextView;
@@ -45,6 +47,8 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String PHONE = "phone";
+    public static final String ADDRESS = "address";
+    public static final String IMG = "img";
 
     @Nullable
     @Override
@@ -58,7 +62,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         confirmPasswordLayout = view.findViewById(R.id.txt_signup_confirmPassword);
         phoneNumberLayout = view.findViewById(R.id.txt_signup_phone);
         //userImgView = view.findViewById(R.id.userImgView);
-        //TODO: Change address to Google Places
+        //TODO: Change address to Google Places --Done
 //        addressLayout = view.findViewById(R.id.txt_signup_address);
         addressTextView = view.findViewById(R.id.addressTextView);
         googleApiInstance = GooglePlaceApi.getInstance(getContext());
@@ -70,6 +74,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         btnGoToSignIn = view.findViewById(R.id.btn_goToSignIn);
 
         service = LostChildServiceClient.getInstance();
+        service.setSignUpFragment(this);
         validator = Validator.getInstance();
         validator.setContext(getContext());
 
@@ -105,6 +110,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 onTxtLayoutChange(hasFocus, passwordLayout, PASSWORD);
+                onTxtLayoutChange(hasFocus, passwordLayout, confirmPasswordLayout);
             }
         });
 
@@ -130,16 +136,22 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
             @Override
             public void onClick(View v) {
 
+                String emailErrMsg = "";
+
                 firstNameLayout.setError(validator.validateField(FIRST_NAME, firstNameLayout));
                 lastNameLayout.setError(validator.validateField(LAST_NAME, lastNameLayout));
-                emailLayout.setError(validator.validateField(EMAIL, emailLayout));
+
+                emailErrMsg = validator.validateField(emailLayout);
+                if(emailErrMsg.isEmpty())
+                    service.isEmailDuplicated(emailLayout.getEditText().getText().toString());
+
                 passwordLayout.setError(validator.validateField(PASSWORD, passwordLayout));
                 confirmPasswordLayout.setError(validator.validateField(passwordLayout, confirmPasswordLayout));
                 phoneNumberLayout.setError(validator.validateField(PHONE, phoneNumberLayout));
 
                 if (firstNameLayout.getError() == "" && lastNameLayout.getError() == "" &&
                         emailLayout.getError() == "" && passwordLayout.getError() == "" &&
-                        confirmPasswordLayout.getError() == "") {
+                        confirmPasswordLayout.getError() == "" && phoneNumberLayout.getError() == "") {
 
                     User newUser = new User();
                     newUser.setFirstName(firstNameLayout.getEditText().getText().toString());
@@ -161,9 +173,11 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
 
     void onTxtLayoutChange(boolean hasFocus, TextInputLayout inputLayout, String type) {
 
-        if (type == EMAIL && !hasFocus) {
-            String emailErrorMsg = validator.validateField(this, inputLayout);
+        if (type.equals(EMAIL) && !hasFocus) {
+            String emailErrorMsg = validator.validateField(inputLayout);
             inputLayout.setError(emailErrorMsg);
+            if(emailErrorMsg.isEmpty())
+                service.isEmailDuplicated(inputLayout.getEditText().getText().toString());
 
         } else if (!hasFocus) {
             inputLayout.setError(validator.validateField(type, inputLayout));
