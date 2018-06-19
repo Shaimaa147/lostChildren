@@ -147,12 +147,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment currFragment = null;
-        String currTag = "";
 
         if (id == R.id.Home) {
-            currFragment = lostAndFoundTabs;
-            currTag = LostAndFoundTabsFragment.LOST_AND_FOUND_TABS;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_main_content, lostAndFoundTabs, LostAndFoundTabsFragment.LOST_AND_FOUND_TABS)
+                    .commit();
             navigationView.getMenu().getItem(0).setChecked(true);
 
         } else if (id == R.id.reportLost) {
@@ -164,22 +164,15 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.search) {
             //TODO: Redirect to Search
 
-            navigationView.getMenu().getItem(3).setChecked(true);
-
         } else if (id == R.id.profile) {
-            currFragment = new UserProfileFragment();
-            currTag = UserProfileFragment.USER_PROFILE;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_main_content, new UserProfileFragment(), UserProfileFragment.USER_PROFILE)
+                    .commit();
             navigationView.getMenu().getItem(4).setChecked(true);
 
         } else if (id == R.id.logout) {
             logOut(HomeActivity.SIGN_IN_TAG);
-        }
-
-        if(currFragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_main_content, currFragment, currTag)
-                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
