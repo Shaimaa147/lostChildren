@@ -43,17 +43,15 @@ public class SignInFragment extends Fragment implements SignInFragmentUpdate {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailLayout.getEditText().getText().toString();
-                String password = passwordLayout.getEditText().getText().toString();
-//                boolean isEmailValid = validator.validateEmailFormat(email);
-//                boolean isPasswordValid = validator.validateLength(password, HomeActivity.minPasswordLength);
+                emailLayout.setError(validator.validateField(emailLayout));
+                passwordLayout.setError(validator.validateField(SignUpFragment.PASSWORD, passwordLayout));
 
-                emailLayout.setError("");
-                passwordLayout.setError("");
+                if (emailLayout.getError().toString().isEmpty() && passwordLayout.getError().toString().isEmpty()) {
+
 
 //                if (isEmailValid && isPasswordValid) {
-                    service.setSignInFragment(SignInFragment.this);
-                    service.signIn(email, password);
+//                    service.setSignInFragment(SignInFragment.this);
+//                    service.signIn(email, password);
 //                }
 //                else {
 //                    if (isPasswordValid)
@@ -66,6 +64,12 @@ public class SignInFragment extends Fragment implements SignInFragmentUpdate {
 //                    else
 //                        emailLayout.setError("Invalid Email Format");
 //                }
+
+                    service.setSignInFragment(SignInFragment.this);
+                    service.signIn(emailLayout.getEditText().getText().toString(),
+                            passwordLayout.getEditText().getText().toString());
+                }
+
             }
         });
 

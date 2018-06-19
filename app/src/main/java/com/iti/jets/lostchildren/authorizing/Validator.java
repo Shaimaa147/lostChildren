@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 import static com.iti.jets.lostchildren.authorizing.SignUpFragment.*;
+//import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.FROMAGE;
+//import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.TOAGE;
 import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.FROMAGE;
 import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.TOAGE;
 import static com.iti.jets.lostchildren.reporting.LostChildReportFragment.*;

@@ -12,13 +12,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.iti.jets.lostchildren.googlePlaceService.GooglePlaceApi;
 import com.iti.jets.lostchildren.homeScreen.MainActivity;
 import com.iti.jets.lostchildren.R;
 
+import com.iti.jets.lostchildren.image.ImageUpload;
 import com.iti.jets.lostchildren.pojos.User;
 import com.iti.jets.lostchildren.service.*;
 import java.io.File;
@@ -32,9 +35,11 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     //TODO: Address (Google Place) Validation
     //TODO: User Image
     private TextInputLayout firstNameLayout, lastNameLayout, emailLayout,
-            passwordLayout, confirmPasswordLayout, addressLayout, phoneNumberLayout;
+            passwordLayout, confirmPasswordLayout, phoneNumberLayout;
     private Button btnSignUp, btnGoToSignIn;
     private ImageView userImgView;
+    private AutoCompleteTextView addressTextView;
+    private GooglePlaceApi googleApiInstance;
     private LostChildServiceClient service;
     private Validator validator;
     public static final String FIRST_NAME = "firstName";
@@ -43,6 +48,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     public static final String PASSWORD = "password";
     public static final String PHONE = "phone";
     public static final String ADDRESS = "address";
+    public static final String IMG = "img";
 
     @Nullable
     @Override
@@ -55,8 +61,14 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         passwordLayout = view.findViewById(R.id.txt_signup_password);
         confirmPasswordLayout = view.findViewById(R.id.txt_signup_confirmPassword);
         phoneNumberLayout = view.findViewById(R.id.txt_signup_phone);
-//        userImgView = view.findViewById(R.id.userImgView);
+        //userImgView = view.findViewById(R.id.userImgView);
+        //TODO: Change address to Google Places --Done
 //        addressLayout = view.findViewById(R.id.txt_signup_address);
+        addressTextView = view.findViewById(R.id.addressTextView);
+        googleApiInstance = GooglePlaceApi.getInstance(getContext());
+        addressTextView.setThreshold(3);
+        addressTextView.setOnItemClickListener(googleApiInstance);
+        addressTextView.setAdapter(googleApiInstance.getmPlaceArrayAdapter());
 
         btnSignUp = view.findViewById(R.id.btn_signUp);
         btnGoToSignIn = view.findViewById(R.id.btn_goToSignIn);
@@ -98,6 +110,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 onTxtLayoutChange(hasFocus, passwordLayout, PASSWORD);
+                onTxtLayoutChange(hasFocus, passwordLayout, confirmPasswordLayout);
             }
         });
 
@@ -146,8 +159,9 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
                     newUser.setEmail(emailLayout.getEditText().getText().toString());
                     newUser.setPassword(passwordLayout.getEditText().getText().toString());
                     newUser.setPhone(phoneNumberLayout.getEditText().getText().toString());
-                    newUser.setAddress(addressLayout.getEditText().getText().toString());
-
+//                    newUser.setAddress(addressLayout.getEditText().getText().toString());
+//                    if(!addressTextView.getText().toString().equals(""))
+                        newUser.setAddress(addressTextView.getText().toString());
                     Toast.makeText(getContext(), "Singing Up....", Toast.LENGTH_LONG).show();
                     service.signUp(newUser);
 
@@ -159,7 +173,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
 
     void onTxtLayoutChange(boolean hasFocus, TextInputLayout inputLayout, String type) {
 
-        if (type == EMAIL && !hasFocus) {
+        if (type.equals(EMAIL) && !hasFocus) {
             String emailErrorMsg = validator.validateField(inputLayout);
             inputLayout.setError(emailErrorMsg);
             if(emailErrorMsg.isEmpty())
@@ -196,7 +210,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         File imgFile = new File(imgPath);
 
         service.setContext(getActivity().getApplicationContext());
-        Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+        Uri imgUri = ImageUpload.getUriFromPath(imgPath, getActivity().getApplicationContext());
         service.uploadUserImageToServer(newUser, imgFile, imgUri);
     }
 
@@ -205,21 +219,5 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
         Intent i = new Intent(getContext(), MainActivity.class);
         i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
         startActivity(i);
-    }
-
-    private Uri getUriFromPath(String filePath, Context context) {
-        long photoId;
-        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
-
-        String[] projection = {MediaStore.Images.ImageColumns._ID};
-        // TODO This will break if we have no matching item in the MediaStore.
-        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(projection[0]);
-        photoId = cursor.getLong(columnIndex);
-
-        cursor.close();
-        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }
