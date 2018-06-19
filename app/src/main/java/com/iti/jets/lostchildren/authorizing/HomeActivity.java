@@ -80,9 +80,9 @@ public class HomeActivity extends AppCompatActivity {
                 currentUser.setEmail(userSharedPref.getString(SignUpFragment.EMAIL, null));
                 currentUser.setPassword(userSharedPref.getString(SignUpFragment.PASSWORD, null));
 
-                userNullableData = userSharedPref.getString(SignUpFragment.FIRST_NAME, null);
+                userNullableData = userSharedPref.getString(SignUpFragment.IMG, null);
                 if(userNullableData != null)
-                    currentUser.setImageUrl(userSharedPref.getString(SignUpFragment.FIRST_NAME, null));
+                    currentUser.setImageUrl(userSharedPref.getString(SignUpFragment.IMG, null));
 
                 userNullableData = userSharedPref.getString(SignUpFragment.ADDRESS, null);
                 if(userNullableData != null)

@@ -43,6 +43,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     public static final String PASSWORD = "password";
     public static final String PHONE = "phone";
     public static final String ADDRESS = "address";
+    public static final String IMG = "img";
 
     @Nullable
     @Override

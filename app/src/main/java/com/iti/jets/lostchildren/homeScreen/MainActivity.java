@@ -92,11 +92,8 @@ public class MainActivity extends AppCompatActivity
             if (userPhone != null)
                 sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
 
-            if (currentUser.getImageUrl() == null) {
-                sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
-                //TODO: Cache user image using Picasso
-                Toast.makeText(getApplicationContext(), userImgUrl, LENGTH_LONG).show();
-//                http://localhost:8084/LostChildren/users_images/ahmed.zagh@gmail.com.jpeg
+            if (currentUser.getImageUrl() != null) {
+                sharedPrefEditor.putString(SignUpFragment.IMG, currentUser.getImageUrl().toString());
             }
 
             sharedPrefEditor.commit();

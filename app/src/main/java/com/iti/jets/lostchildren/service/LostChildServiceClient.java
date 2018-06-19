@@ -49,6 +49,9 @@ public class LostChildServiceClient {
     public static final String JSON_MSG_FAILED = "FAILED";
     public static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
 
+    public static String getServerIp() {
+        return serverIp;
+    }
 
     private static LostChildServiceClient client;
     private LostChildService service;
