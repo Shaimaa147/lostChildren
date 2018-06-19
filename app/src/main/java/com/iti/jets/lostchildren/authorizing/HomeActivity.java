@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.reporting.FoundChildReportFragment;
 import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
+import com.iti.jets.lostchildren.searchScreen.SearchFragment;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 /**
@@ -25,6 +26,8 @@ public class HomeActivity extends AppCompatActivity {
     public static final String REQUIRED_FREGMENT = "requiredFragment";
     public static final String LOST_TAG = "Lost";
     public static final String FOUND_TAG = "Found";
+    public static final String SEARCH_TAG = "Search";
+
 
     SignInFragment signInFragment;
     Fragment currentFragment;
@@ -47,6 +50,10 @@ public class HomeActivity extends AppCompatActivity {
                 currentFragment = new FoundChildReportFragment();
                 LostChildServiceClient.getInstance().setFoundChildReportFragment((FoundChildReportFragment) currentFragment);
                 currentFragmentTag = FOUND_TAG;
+                break;
+            case SEARCH_TAG:
+                currentFragment = new SearchFragment();
+                currentFragmentTag = SEARCH_TAG;
                 break;
             default:
                 currentFragment = new SignInFragment();

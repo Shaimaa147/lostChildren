@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.search) {
             //TODO: Redirect to Search
+            redirectToMainActivity(HomeActivity.SEARCH_TAG);
 
         } else if (id == R.id.profile) {
             //TODO: Redirect to Profile
