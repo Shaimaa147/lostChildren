@@ -14,6 +14,7 @@ import com.iti.jets.lostchildren.homeScreen.FragmentFound;
 import com.iti.jets.lostchildren.homeScreen.FragmentLost;
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
+import com.iti.jets.lostchildren.pojos.SignInResponse;
 import com.iti.jets.lostchildren.pojos.User;
 import com.iti.jets.lostchildren.reporting.FoundChildReportFragment;
 import com.iti.jets.lostchildren.reporting.LostChildReportFragment;
@@ -39,7 +40,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LostChildServiceClient {
 
-    private static final String serverIp = "10.0.1.50";
+    private static final String serverIp = "192.168.1.4";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
@@ -100,29 +101,27 @@ public class LostChildServiceClient {
     }
 
     public void signIn(String email, String password) {
-        final HashMap<String, String> userData = new HashMap<String, String>();
+        final HashMap<String, String> userData = new HashMap();
         userData.put(SignUpFragment.EMAIL, email);
         userData.put(SignUpFragment.PASSWORD, password);
 
-        service.signIn(userData).enqueue(new Callback<LogInDataDto>() {
+        service.signIn(userData).enqueue(new Callback<SignInResponse>() {
             @Override
-            public void onResponse(Call<LogInDataDto> call, Response<LogInDataDto> response) {
+            public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.i("signin status", response.body().getStatus());
 
                     if (response.body().getStatus().equals(JSON_MSG_SUCCESS)) {
                         signInFragment.showInvalidEmailOrPasswordMsg(false);
-                        signInFragment.redirectToMainActivity(new Gson().toJson(userData));
+                        signInFragment.redirectToMainActivity(new Gson().toJson(response.body().getUser()));
                     }
 
-                    //TODO: Handle When Wrong Email or Password
                     else if (response.body().getStatus().equals(JSON_MSG_FAILED))
                         signInFragment.showInvalidEmailOrPasswordMsg(true);
                 }
             }
 
             @Override
-            public void onFailure(Call<LogInDataDto> call, Throwable t) {
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
                 Log.i("signin", "inc " + t.toString());
             }
         });

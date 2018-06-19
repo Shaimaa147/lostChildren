@@ -2,6 +2,7 @@ package com.iti.jets.lostchildren.service;
 
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
+import com.iti.jets.lostchildren.pojos.SignInResponse;
 import com.iti.jets.lostchildren.pojos.User;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import retrofit2.http.Query;
 public interface LostChildService {
 
     @POST("login.json")
-    Call<LogInDataDto> signIn (@Body HashMap<String, String> emailAndPassword);
+    Call<SignInResponse> signIn (@Body HashMap<String, String> emailAndPassword);
 
     @POST("register.json")
     Call<User> signUp (@Body User user);

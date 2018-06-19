@@ -32,7 +32,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     //TODO: Address (Google Place) Validation
     //TODO: User Image
     private TextInputLayout firstNameLayout, lastNameLayout, emailLayout,
-            passwordLayout, confirmPasswordLayout, addressLayout, phoneNumberLayout;
+            passwordLayout, confirmPasswordLayout, phoneNumberLayout;
     private Button btnSignUp, btnGoToSignIn;
     private ImageView userImgView;
     private LostChildServiceClient service;
@@ -98,6 +98,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 onTxtLayoutChange(hasFocus, passwordLayout, PASSWORD);
+                onTxtLayoutChange(hasFocus, passwordLayout, confirmPasswordLayout);
             }
         });
 
@@ -146,7 +147,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
                     newUser.setEmail(emailLayout.getEditText().getText().toString());
                     newUser.setPassword(passwordLayout.getEditText().getText().toString());
                     newUser.setPhone(phoneNumberLayout.getEditText().getText().toString());
-                    newUser.setAddress(addressLayout.getEditText().getText().toString());
+//                    newUser.setAddress(addressLayout.getEditText().getText().toString());
 
                     Toast.makeText(getContext(), "Singing Up....", Toast.LENGTH_LONG).show();
                     service.signUp(newUser);
@@ -159,7 +160,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
 
     void onTxtLayoutChange(boolean hasFocus, TextInputLayout inputLayout, String type) {
 
-        if (type == EMAIL && !hasFocus) {
+        if (type.equals(EMAIL) && !hasFocus) {
             String emailErrorMsg = validator.validateField(inputLayout);
             inputLayout.setError(emailErrorMsg);
             if(emailErrorMsg.isEmpty())

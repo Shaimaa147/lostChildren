@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,30 +15,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import com.iti.jets.lostchildren.R;
-import com.iti.jets.lostchildren.adapter.ViewPagerAdpter;
 
 import com.iti.jets.lostchildren.authorizing.HomeActivity;
 import com.iti.jets.lostchildren.authorizing.SignUpFragment;
 import com.iti.jets.lostchildren.pojos.User;
+import com.iti.jets.lostchildren.profile.UserProfileFragment;
+
+import org.w3c.dom.Text;
 
 import static android.widget.Toast.LENGTH_LONG;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private TabLayout tableLayout ;
-    private ViewPager viewPager;
-    private ViewPagerAdpter adpter;
     private String userAddress;
     private String userPhone;
     private String userImgUrl;
     private SharedPreferences userSharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
+    private TextView txtViewNavUserEmail;
+    private TextView txtViewNavUserName;
+    private NavigationView navigationView;
+    private LostAndFoundTabsFragment lostAndFoundTabs;
 
     public static final String LOGGED_IN_USER_JSON = "loggedInUserJson";
     public static final String USER_SHARED_PREF = "userSharedPref";
@@ -53,44 +55,36 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
-        tableLayout = findViewById(R.id.tableLayoutID);
-        viewPager = findViewById(R.id.pagerID);
-        adpter = new ViewPagerAdpter(getSupportFragmentManager());
-        adpter.addFragment(new FragmentLost() , "Lost Children");
-        adpter.addFragment(new FragmentFound(),"Found Children");
-        viewPager.setAdapter(adpter);
-        tableLayout.setupWithViewPager(viewPager);
+        txtViewNavUserEmail = headerView.findViewById(R.id.nav_user_email);
+        txtViewNavUserName = headerView.findViewById(R.id.nav_user_name);
 
         currentUser = new Gson().fromJson(getIntent().getStringExtra(LOGGED_IN_USER_JSON), User.class);
-        //Toast.makeText(getApplicationContext(), currentUser.getEmail(), Toast.LENGTH_LONG).show();
+        txtViewNavUserName.setText(currentUser.getFirstName().toString()
+                + " " + currentUser.getLastName().toString());
+        txtViewNavUserEmail.setText(currentUser.getEmail());
 
         userSharedPref = getSharedPreferences(USER_SHARED_PREF, Context.MODE_PRIVATE);
-        if(userSharedPref == null) {
+
+        if(userSharedPref.getString(SignUpFragment.FIRST_NAME, null) == null) {
+
             sharedPrefEditor = userSharedPref.edit();
             sharedPrefEditor.putString(SignUpFragment.FIRST_NAME, currentUser.getFirstName().toString());
             sharedPrefEditor.putString(SignUpFragment.LAST_NAME, currentUser.getLastName().toString());
             sharedPrefEditor.putString(SignUpFragment.EMAIL, currentUser.getEmail().toString());
             sharedPrefEditor.putString(SignUpFragment.PASSWORD, currentUser.getPassword().toString());
 
-            userAddress = currentUser.getAddress().toString();
+//            userAddress = currentUser.getAddress().toString();
             if (userAddress != null)
                 sharedPrefEditor.putString(SignUpFragment.ADDRESS, userAddress);
 
@@ -98,8 +92,7 @@ public class MainActivity extends AppCompatActivity
             if (userPhone != null)
                 sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
 
-            userImgUrl = currentUser.getImageUrl().toString();
-            if (userImgUrl == null) {
+            if (currentUser.getImageUrl() == null) {
                 sharedPrefEditor.putString(SignUpFragment.PHONE, currentUser.getPhone().toString());
                 //TODO: Cache user image using Picasso
                 Toast.makeText(getApplicationContext(), userImgUrl, LENGTH_LONG).show();
@@ -108,6 +101,12 @@ public class MainActivity extends AppCompatActivity
 
             sharedPrefEditor.commit();
         }
+
+        lostAndFoundTabs = new LostAndFoundTabsFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_main_content, lostAndFoundTabs, LostAndFoundTabsFragment.LOST_AND_FOUND_TABS)
+                .commit();
 
     }
 
@@ -148,10 +147,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment currFragment = null;
+        String currTag = "";
 
         if (id == R.id.Home) {
-            // Handle the home action
-            //TODO: Redirect to Home
+            currFragment = lostAndFoundTabs;
+            currTag = LostAndFoundTabsFragment.LOST_AND_FOUND_TABS;
+            navigationView.getMenu().getItem(0).setChecked(true);
+
         } else if (id == R.id.reportLost) {
             redirectToMainActivity(HomeActivity.LOST_TAG);
 
@@ -161,11 +164,22 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.search) {
             //TODO: Redirect to Search
 
+            navigationView.getMenu().getItem(3).setChecked(true);
+
         } else if (id == R.id.profile) {
-            //TODO: Redirect to Profile
+            currFragment = new UserProfileFragment();
+            currTag = UserProfileFragment.USER_PROFILE;
+            navigationView.getMenu().getItem(4).setChecked(true);
 
         } else if (id == R.id.logout) {
-            //TODO: Redirect to SignIn and clear sharedPref
+            logOut(HomeActivity.SIGN_IN_TAG);
+        }
+
+        if(currFragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_main_content, currFragment, currTag)
+                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -176,6 +190,14 @@ public class MainActivity extends AppCompatActivity
     public void redirectToMainActivity(String requiredFragment) {
         Intent i = new Intent(getApplicationContext(), HomeActivity.class);
         i.putExtra(HomeActivity.REQUIRED_FREGMENT, requiredFragment);
+        startActivity(i);
+    }
+
+    public void logOut(String requiredFragment) {
+        userSharedPref.edit().clear().commit();
+        Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+        i.putExtra(HomeActivity.REQUIRED_FREGMENT, HomeActivity.SIGN_IN_TAG);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
     }
 
