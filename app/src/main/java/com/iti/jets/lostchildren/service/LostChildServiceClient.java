@@ -39,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LostChildServiceClient {
 
-    private static final String serverIp = "10.0.1.85";
+    private static final String serverIp = "192.168.1.2";
     public static final String BASE_URL = "http://" + serverIp + ":8084/LostChildren/rest/";
     public static final String JSON_MSG_STATUS = "status";
     public static final String JSON_MSG_FOUND_EMAIL = "FOUND";
@@ -293,25 +293,25 @@ public class LostChildServiceClient {
                 MediaType.parse(context.getContentResolver().getType(imgUri)),
                 imgFile);
 
-        service.reportFound(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
-            @Override
-            public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
-                if(response != null && response.code() == 200) {
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS)) {
-                        Log.i("LostReporting", "report found status success");
-                        foundChildReportFragment.redirectToHome(true);
-                    }
-                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
-                        Log.i("LostReporting", "report found status failed");
-                        foundChildReportFragment.redirectToHome(false);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<HashMap<String, String>> call, Throwable t) {
-                Log.i("FoundReporting", "failed " + t.toString());
-            }
-        });
+//        service.reportFound(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
+//            @Override
+//            public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
+//                if(response != null && response.code() == 200) {
+//                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS)) {
+//                        Log.i("LostReporting", "report found status success");
+//                        foundChildReportFragment.redirectToHome(true);
+//                    }
+//                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
+//                        Log.i("LostReporting", "report found status failed");
+//                        foundChildReportFragment.redirectToHome(false);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<HashMap<String, String>> call, Throwable t) {
+//                Log.i("FoundReporting", "failed " + t.toString());
+//            }
+//        });
     }
 }

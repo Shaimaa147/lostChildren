@@ -1,19 +1,13 @@
 package com.iti.jets.lostchildren.reporting;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,19 +15,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-//import com.iti.jets.lostchildren.MainActivity;
 import com.iti.jets.lostchildren.R;
 import com.iti.jets.lostchildren.authorizing.Validator;
+import com.iti.jets.lostchildren.googlePlaceService.GooglePlaceApi;
 import com.iti.jets.lostchildren.homeScreen.MainActivity;
+import com.iti.jets.lostchildren.image.ImageSelection;
+import com.iti.jets.lostchildren.image.ImageUpload;
 import com.iti.jets.lostchildren.pojos.LostChild;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -47,21 +34,14 @@ import java.util.Calendar;
  */
 
 public class LostChildReportFragment extends Fragment implements ReportingInterface,
-        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
         com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener {
 
     public static final String AGE = "Age";
     public static final String Reporter_PHONE = "Reporter Phone";
     public static final String MOTHER_NAME = "Mother name";
     /*Place*/
-    private static final String LOG_TAG = "LostChildFragmment";
-    private static final int GOOGLE_API_CLIENT_ID = 0;
     private AutoCompleteTextView originalAddress;
     private AutoCompleteTextView lostLocation;
-    private GoogleApiClient mGoogleApiClient;
-    private PlaceArrayAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW =
-            new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
     /*Place*/
     private ImageView childImgView;
     private ImageView uploadImgBtn;
@@ -79,7 +59,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
     private  Button dateBtn;
     private LostChildServiceClient service;
     private Validator validator;
-
+    private GooglePlaceApi googleApiInstance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,16 +75,15 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
         super.onStart();
         originalAddress = (AutoCompleteTextView) getActivity().findViewById(R.id.originalAddress);
         lostLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.lostLocation);
+        googleApiInstance = GooglePlaceApi.getInstance(getContext());
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext()).addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(), GOOGLE_API_CLIENT_ID, this).addConnectionCallbacks(this).build();
         originalAddress.setThreshold(3);
         lostLocation.setThreshold(3);
-        originalAddress.setOnItemClickListener(mAutocompleteClickListener);
-        lostLocation.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
-        originalAddress.setAdapter(mPlaceArrayAdapter);
-        lostLocation.setAdapter(mPlaceArrayAdapter);
+        originalAddress.setOnItemClickListener(googleApiInstance);
+        lostLocation.setOnItemClickListener(googleApiInstance);
+
+        originalAddress.setAdapter(googleApiInstance.getmPlaceArrayAdapter());
+        lostLocation.setAdapter(googleApiInstance.getmPlaceArrayAdapter());
 
         service = LostChildServiceClient.getInstance();
         validator = Validator.getInstance();
@@ -112,6 +91,13 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
 
         childImgView = (ImageView) getActivity().findViewById(R.id.childImgView);
         uploadImgBtn = (ImageView) getActivity().findViewById(R.id.uploadImgBtn);
+        uploadImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageSelection.ShowCustomDialog(getContext(),
+                        (ViewGroup) getActivity().findViewById(R.id.lost_fragment_layout),childImgView);
+            }
+        });
         firstNameWraapper = (TextInputLayout) getActivity().findViewById(R.id.firstNameWraapper);
         lastNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.lastNameWrapper);
         motherNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.motherNameWrapper);
@@ -174,7 +160,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                 // add image
                 String imgPath = "/storage/sdcard0/pictures/ww.jpg";
                 File imgFile = new File(imgPath);
-                Uri imgUri = getUriFromPath(imgPath, getActivity().getApplicationContext());
+                Uri imgUri = ImageUpload.getUriFromPath(imgPath, getActivity().getApplicationContext());
                 //
                 if (firstNameWraapper.getError() == "" && lastNameWrapper.getError() == "" &&
                         phoneWrapper.getError() == "" && ageWrapper.getError() == "") {
@@ -206,63 +192,12 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
         });
     }
 
-    /*place*/
     @Override
-    public void onConnected(Bundle bundle) {
-        mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
-        Log.i(LOG_TAG, "Google Places API connected.");
+    public void onActivityResult(int arg0, int arg1, Intent arg2) {
 
+        super.onActivityResult(arg0, arg1, arg2);
+        ImageSelection.customOnActivityResult(arg0, arg1, arg2, getContext(),childImgView);
     }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
-                + connectionResult.getErrorCode());
-
-        Toast.makeText(getContext(),
-                "Google Places API connection failed with error code:" +
-                        connectionResult.getErrorCode(),
-                Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mPlaceArrayAdapter.setGoogleApiClient(null);
-        Log.e(LOG_TAG, "Google Places API connection suspended.");
-    }
-
-    private AdapterView.OnItemClickListener mAutocompleteClickListener
-            = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
-            final String placeId = String.valueOf(item.placeId);
-            Log.i(LOG_TAG, "Selected: " + item.description);
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                    .getPlaceById(mGoogleApiClient, placeId);
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-            Log.i(LOG_TAG, "Fetching details for ID: " + item.placeId);
-        }
-    };
-
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
-            = new ResultCallback<PlaceBuffer>() {
-        @Override
-        public void onResult(PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
-                Log.e(LOG_TAG, "Place query did not complete. Error: " +
-                        places.getStatus().toString());
-                return;
-            }
-
-            final Place place = places.get(0);
-            CharSequence attributions = places.getAttributions();
-            if (attributions != null) {
-                Log.i(LOG_TAG, "attributions: " + Html.fromHtml(attributions.toString()));
-            }
-        }
-    };
-    /*place*/
 
 
     public void setDate(View view) {
@@ -306,21 +241,5 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
         }
 
 
-    }
-
-    private Uri getUriFromPath(String filePath, Context context) {
-        long photoId;
-        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
-
-        String[] projection = {MediaStore.Images.ImageColumns._ID};
-        // TODO This will break if we have no matching item in the MediaStore.
-        Cursor cursor = context.getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(projection[0]);
-        photoId = cursor.getLong(columnIndex);
-
-        cursor.close();
-        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
 }

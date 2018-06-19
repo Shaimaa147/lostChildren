@@ -1,4 +1,4 @@
-package com.iti.jets.lostchildren.reporting;
+package com.iti.jets.lostchildren.googlePlaceService;
 
 import android.content.Context;
 import android.util.Log;

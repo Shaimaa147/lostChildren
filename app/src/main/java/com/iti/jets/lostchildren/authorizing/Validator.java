@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 import com.iti.jets.lostchildren.service.LostChildServiceClient;
 
 import static com.iti.jets.lostchildren.authorizing.SignUpFragment.*;
-import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.FROMAGE;
-import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.TOAGE;
+//import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.FROMAGE;
+//import static com.iti.jets.lostchildren.reporting.FoundChildReportFragment.TOAGE;
 import static com.iti.jets.lostchildren.reporting.LostChildReportFragment.*;
 
 /**
@@ -98,9 +98,9 @@ public class Validator {
                     && !TextUtils.isDigitsOnly(strToValidate))
                 errorMsg = context.getString(R.string.invalid_phone_number);
 
-            else if((strToValidateType.equals(AGE) || strToValidateType.equals(FROMAGE) || strToValidateType.equals(TOAGE))
-                    && !TextUtils.isDigitsOnly(strToValidate) && Integer.parseInt(strToValidate) > 0)
-                errorMsg = context.getString(R.string.invalid_age);
+//            else if((strToValidateType.equals(AGE) || strToValidateType.equals(FROMAGE) || strToValidateType.equals(TOAGE))
+//                    && !TextUtils.isDigitsOnly(strToValidate) && Integer.parseInt(strToValidate) > 0)
+//                errorMsg = context.getString(R.string.invalid_age);
         }
         return errorMsg;
     }
