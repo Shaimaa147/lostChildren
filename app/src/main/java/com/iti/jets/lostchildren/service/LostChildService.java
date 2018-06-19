@@ -2,6 +2,7 @@ package com.iti.jets.lostchildren.service;
 
 import com.iti.jets.lostchildren.pojos.FoundChild;
 import com.iti.jets.lostchildren.pojos.LostChild;
+import com.iti.jets.lostchildren.pojos.SearchResult;
 import com.iti.jets.lostchildren.pojos.SignInResponse;
 import com.iti.jets.lostchildren.pojos.User;
 
@@ -61,5 +62,8 @@ public interface LostChildService {
                                                @Part("email") RequestBody email,
                                                @Part("image\"; filename=\"lost.png ") RequestBody image,
                                                @Part("extension") RequestBody extension);
+    @Multipart
+    @POST("search.json")
+    Call<SearchResult> searchCild (@Part("firstName") RequestBody fName,@Part("lastName")RequestBody lName,@Part("gender") RequestBody gender ,@Part("userImage") RequestBody img);
 
 }

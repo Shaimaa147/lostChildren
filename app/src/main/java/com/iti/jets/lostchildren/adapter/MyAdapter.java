@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.CHILD_JSON;
 import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.CHILD_TYPE;
@@ -38,8 +39,8 @@ import static com.iti.jets.lostchildren.homeScreen.ChildDetailsFragment.LOST_CHI
  */
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    public static  final String imgeURL = "http://192.168.1.3:8084/LostChildren/lost_images/";
-    public  static  final  String userImageURL = "http://192.168.1.3:8084/LostChildren/users_images/";
+    public static  final String imgeURL = "http://10.0.1.85:8084/LostChildren/lost_images/";
+    public  static  final  String userImageURL = "http://10.0.1.85:8084/LostChildren/users_images/";
     private LayoutInflater inflater ;
     Context context;
     List<LostChild> data = Collections.emptyList();
@@ -84,14 +85,34 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         LostChild current = data.get(position);
-        Log.i("home",current.getOrginalAddress().toString());
-        holder.lostName.setText(current.getFirstName()+" "+current.getLastName() );
-      holder.age.setText(current.getAge().toString());
-     holder.city.setText(current.getOrginalAddress().toString());
-    holder.reporter.setText(" "+current.getLostUserId().getLastName().toString());
-        Picasso.get().load(imgeURL+current.getImageUrl()).placeholder(R.drawable.one).into(holder.img);
-        Picasso.get().load(userImageURL+current.getLostUserId().getImageUrl()).placeholder(R.drawable.two).into(holder.imgBy);
 
+        holder.lostName.setText(current.getFirstName()+" "+current.getLastName() );
+        if(current.getAge().toString() == null){
+            holder.age.setText(" ");
+        }
+        else {
+            holder.age.setText(current.getAge().toString());
+        }
+        if(current.getOrginalAddress().toString() == null){
+            holder.city.setText("  ");
+        }
+        else {
+            holder.city.setText(current.getOrginalAddress().toString());
+        }
+        if(current.getLostUserId().getLastName().toString() == null ){
+            holder.reporter.setText(" ");
+
+        }
+        else {
+            holder.reporter.setText(" " + current.getLostUserId().getLastName().toString());
+        }
+
+
+        String[] userPaths = current.getImageUrl().toString().split(Pattern.quote("\\"));
+        String[] childPaths = current.getLostUserId().getImageUrl().toString().split(Pattern.quote("\\"));
+        Log.i("PROFILE", userPaths[0]);
+        Picasso.get().load(imgeURL+userPaths[1]).placeholder(R.drawable.placeholder).into(holder.img);
+        Picasso.get().load(userImageURL+childPaths[1]).placeholder(R.drawable.placeholder).into(holder.imgBy);
     }
 
     @Override

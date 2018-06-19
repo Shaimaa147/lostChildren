@@ -156,7 +156,7 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                 motherNameWrapper.setError(validator.validateField(MOTHER_NAME, motherNameWrapper));
 
                 // add image
-                String imgPath = "/storage/sdcard0/pictures/ww.jpg";
+                String imgPath = "/storage/emulated/0/pic.jpg";
                 File imgFile = new File(imgPath);
                 Uri imgUri = ImageUpload.getUriFromPath(imgPath, getActivity().getApplicationContext());
                 //
@@ -230,8 +230,8 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
     public void redirectToHome(Boolean didSuccess) {
 
         if(didSuccess) {
-            Toast.makeText(getContext(), "Report has been saved successfully.", Toast.LENGTH_LONG).show();
-            Intent i = new Intent(getContext(), MainActivity.class);
+//            Toast.makeText(getContext(), "Report has been saved successfully.", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(getActivity().getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
         else {

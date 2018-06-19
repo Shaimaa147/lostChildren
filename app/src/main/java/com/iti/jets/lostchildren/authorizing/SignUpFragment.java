@@ -218,6 +218,7 @@ public class SignUpFragment extends Fragment implements SignUpFragmentUpdate {
     public void redirectToMainActivity(String userJson) {
         Intent i = new Intent(getContext(), MainActivity.class);
         i.putExtra(MainActivity.LOGGED_IN_USER_JSON, userJson);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
     }
 }

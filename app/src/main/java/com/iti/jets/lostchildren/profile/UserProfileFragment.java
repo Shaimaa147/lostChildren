@@ -57,6 +57,9 @@ public class UserProfileFragment extends Fragment {
                 Picasso.get().load(baseUrl + paths[1]).into(userImgView);
                 Log.i("PROFILE", baseUrl + paths[1]);
             }
+            else
+                Log.i("PROFILE", "NULL");
+
 
             userNullableData = userSharedPref.getString(SignUpFragment.ADDRESS, null);
             if(userNullableData != null)

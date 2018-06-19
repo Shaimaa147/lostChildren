@@ -18,14 +18,15 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Ahmed Ali on 6/16/2018.
  */
 
 public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewHolder> {
-    public static  final String imgeURL = "http://192.168.1.3:8084/LostChildren/found_images/";
-    public  static  final  String userImageURL = "http://192.168.1.3:8084/LostChildren/users_images/";
+    public static  final String imgeURL = "http://10.0.1.85:8084/LostChildren/found_images/";
+    public  static  final  String userImageURL = "http://10.0.1.85:8084/LostChildren/users_images/";
     private LayoutInflater inflater ;
     List<FoundChild> data = Collections.emptyList();
     Context context;
@@ -53,11 +54,30 @@ public class FoundAdapater extends RecyclerView.Adapter<FoundAdapater.FoundViewH
     public void onBindViewHolder(FoundViewHolder holder, int position) {
         FoundChild current = data.get(position);
         holder.lostName.setText(current.getFirstName()+" "+current.getLastName() );
-        holder.age.setText(current.getFromAge().toString() + " To " + current.getToAge().toString());
-        holder.city.setText(current.getCurrentLocation().toString());
-        holder.reporter.setText(" "+current.getFoundUserId().getLastName().toString());
-        Picasso.get().load(imgeURL+current.getImageUrl()).placeholder(R.drawable.two).into(holder.img);
-        Picasso.get().load(userImageURL+current.getFoundUserId().getImageUrl()).placeholder(R.drawable.one).into(holder.imgBy);
+        if(current.getFromAge().toString() == null || current.getToAge().toString() == null){
+            holder.age.setText(" ");
+
+        }
+        else {
+            holder.age.setText(current.getFromAge().toString() + " To " + current.getToAge().toString());
+        }
+        if(current.getCurrentLocation().toString() == null){
+
+            holder.city.setText(" ");
+        }
+        else {
+            holder.city.setText(current.getCurrentLocation().toString());
+        }
+        if(current.getFoundUserId().getLastName().toString() == null){
+            holder.reporter.setText(" ");
+        }
+        else {
+            holder.reporter.setText(" " + current.getFoundUserId().getLastName().toString());
+        }
+        String[] userPaths = current.getImageUrl().toString().split(Pattern.quote("\\"));
+        String[] childPaths = current.getFoundUserId().getImageUrl().toString().split(Pattern.quote("\\"));
+        Picasso.get().load(imgeURL+userPaths[1]).placeholder(R.drawable.placeholder).into(holder.img);
+        Picasso.get().load(userImageURL+childPaths[1]).placeholder(R.drawable.placeholder).into(holder.imgBy);
 
     }
 

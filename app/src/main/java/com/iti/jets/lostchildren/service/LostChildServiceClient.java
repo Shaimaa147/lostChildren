@@ -298,25 +298,36 @@ public class LostChildServiceClient {
                 MediaType.parse(context.getContentResolver().getType(imgUri)),
                 imgFile);
 
-//        service.reportFound(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
-//            @Override
-//            public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
-//                if(response != null && response.code() == 200) {
-//                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS)) {
-//                        Log.i("LostReporting", "report found status success");
-//                        foundChildReportFragment.redirectToHome(true);
-//                    }
-//                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
-//                        Log.i("LostReporting", "report found status failed");
-//                        foundChildReportFragment.redirectToHome(false);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<HashMap<String, String>> call, Throwable t) {
-//                Log.i("FoundReporting", "failed " + t.toString());
-//            }
-//        });
+        service.reportFound(childPart, emailPart, imgPart,extensionPart).enqueue(new Callback<HashMap<String, String>>() {
+            @Override
+            public void onResponse(Call<HashMap<String, String>> call, Response<HashMap<String, String>> response) {
+                if(response != null && response.code() == 200) {
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_SUCCESS)) {
+                        Log.i("LostReporting", "report found status success");
+                        foundChildReportFragment.redirectToHome(true);
+                    }
+                    if (response.body().get(JSON_MSG_STATUS).equals(JSON_MSG_FAILED)) {
+                        Log.i("LostReporting", "report found status failed");
+                        foundChildReportFragment.redirectToHome(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HashMap<String, String>> call, Throwable t) {
+                Log.i("FoundReporting", "failed " + t.toString());
+            }
+        });
     }
+//    public  void searchClidren(String firstName,String  lastName , String gender ,  File imgFile, Uri imgUri ){
+//        RequestBody fnamePart = RequestBody.create(MultipartBody.FORM, firstName);
+//        RequestBody  lastNamePart = RequestBody.create(JSON_MEDIA_TYPE, lastName);
+//        RequestBody extensionPart = RequestBody.create(MultipartBody.FORM, context.getContentResolver().getType(imgUri));
+//        RequestBody imgPart = RequestBody.create(
+//                MediaType.parse(context.getContentResolver().getType(imgUri)),
+//                imgFile);
+//
+//     service.searchCild(firstName,l).enqueue();
+//
+//    }
 }

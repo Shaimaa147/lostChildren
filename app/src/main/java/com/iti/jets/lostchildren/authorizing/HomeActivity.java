@@ -72,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
             case SEARCH_TAG:
                 currentFragment = new SearchFragment();
                 currentFragmentTag = SEARCH_TAG;
+                break;
             case Details_TAG:
                 currentFragment = new ChildDetailsFragment();
                 currentFragmentTag = Details_TAG;

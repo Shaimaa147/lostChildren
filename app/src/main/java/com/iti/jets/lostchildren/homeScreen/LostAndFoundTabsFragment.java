@@ -27,7 +27,7 @@ public class LostAndFoundTabsFragment extends Fragment {
         tableLayout = view.findViewById(R.id.tableLayoutID);
         viewPager = view.findViewById(R.id.pagerID);
 
-        adpter = new ViewPagerAdpter(getActivity().getSupportFragmentManager());
+        adpter = new ViewPagerAdpter(getChildFragmentManager());
         adpter.addFragment(new FragmentLost(), "Lost Children");
         adpter.addFragment(new FragmentFound(), "Found Children");
         viewPager.setAdapter(adpter);

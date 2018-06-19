@@ -152,7 +152,7 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                 phoneWrapper.setError(validator.validateField(PHONE, phoneWrapper));
 
                 // add image
-                String imgPath = "/storage/sdcard0/pictures/ww.jpg";
+                String imgPath = "/storage/emulated/0/pic.jpg";
                 File imgFile = new File(imgPath);
                 Uri imgUri = ImageUpload.getUriFromPath(imgPath, getActivity().getApplicationContext());
                 //

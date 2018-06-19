@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity
             sharedPrefEditor.putString(SignUpFragment.LAST_NAME, currentUser.getLastName().toString());
             sharedPrefEditor.putString(SignUpFragment.EMAIL, currentUser.getEmail().toString());
             sharedPrefEditor.putString(SignUpFragment.PASSWORD, currentUser.getPassword().toString());
+            sharedPrefEditor.putString(SignUpFragment.IMG, currentUser.getImageUrl().toString());
 
 //            userAddress = currentUser.getAddress().toString();
             if (userAddress != null)

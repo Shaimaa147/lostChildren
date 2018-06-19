@@ -91,7 +91,7 @@ public class FragmentLost extends android.support.v4.app.Fragment implements Ret
         service =LostChildServiceClient.getInstance();
         service.setLostFragment(this);
         service.retriveLosts();
-        Toast.makeText(getContext(),"Refrsh Called", Toast.LENGTH_SHORT).show();
+
 
     }
 }
