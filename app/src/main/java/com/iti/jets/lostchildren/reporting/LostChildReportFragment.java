@@ -67,15 +67,8 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lost_child_report, container, false);
 
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        originalAddress = (AutoCompleteTextView) getActivity().findViewById(R.id.originalAddress);
-        lostLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.lostLocation);
+        originalAddress = (AutoCompleteTextView) view.findViewById(R.id.originalAddress);
+        lostLocation = (AutoCompleteTextView) view.findViewById(R.id.lostLocation);
         googleApiInstance = GooglePlaceApi.getInstance(getContext());
 
         originalAddress.setThreshold(3);
@@ -90,8 +83,8 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
         validator = Validator.getInstance();
         validator.setContext(getContext());
 
-        childImgView = (ImageView) getActivity().findViewById(R.id.childImgView);
-        uploadImgBtn = (ImageView) getActivity().findViewById(R.id.uploadImgBtn);
+        childImgView = (ImageView) view.findViewById(R.id.childImgView);
+        uploadImgBtn = (ImageView) view.findViewById(R.id.uploadImgBtn);
         uploadImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,12 +92,12 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                         (ViewGroup) getActivity().findViewById(R.id.lost_fragment_layout),childImgView);
             }
         });
-        firstNameWraapper = (TextInputLayout) getActivity().findViewById(R.id.firstNameWraapper);
-        lastNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.lastNameWrapper);
-        motherNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.motherNameWrapper);
-        descWrapper = (TextInputLayout) getActivity().findViewById(R.id.descWrapper);
-        ageWrapper = (TextInputLayout) getActivity().findViewById(R.id.ageWrapper);
-        phoneWrapper = (TextInputLayout) getActivity().findViewById(R.id.phoneWrapper);
+        firstNameWraapper = (TextInputLayout) view.findViewById(R.id.firstNameWraapper);
+        lastNameWrapper = (TextInputLayout) view.findViewById(R.id.lastNameWrapper);
+        motherNameWrapper = (TextInputLayout) view.findViewById(R.id.motherNameWrapper);
+        descWrapper = (TextInputLayout) view.findViewById(R.id.descWrapper);
+        ageWrapper = (TextInputLayout) view.findViewById(R.id.ageWrapper);
+        phoneWrapper = (TextInputLayout) view.findViewById(R.id.phoneWrapper);
 
         firstNameWraapper.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -137,19 +130,19 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
             }
         });
 
-        genderRadioGroup = (RadioGroup) getActivity().findViewById(R.id.genderRadioGroup);
-        maleRadioBtn = (RadioButton) getActivity().findViewById(R.id.maleRadioBtn);
-        femaleRadioBtn = (RadioButton) getActivity().findViewById(R.id.femaleRadioBtn);
+        genderRadioGroup = (RadioGroup) view.findViewById(R.id.genderRadioGroup);
+        maleRadioBtn = (RadioButton) view.findViewById(R.id.maleRadioBtn);
+        femaleRadioBtn = (RadioButton) view.findViewById(R.id.femaleRadioBtn);
         genderRadioGroup.check(maleRadioBtn.getId());
 
-        dateBtn = (Button) getActivity().findViewById(R.id.dateBtn);
+        dateBtn = (Button) view.findViewById(R.id.dateBtn);
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setDate(v);
             }
         });
-        reportBtn = (Button) getActivity().findViewById(R.id.reportBtn);
+        reportBtn = (Button) view.findViewById(R.id.reportBtn);
         reportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,7 +171,6 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                     child.setPhone(phoneWrapper.getEditText().getText().toString());
                     if(!descWrapper.getEditText().getText().toString().equals(""))
                         child.setDescription(descWrapper.getEditText().getText().toString());
-                    // date String ???
                     child.setLostDate(dateBtn.getText());
                     if(!lostLocation.getText().toString().equals(""))
                         child.setLostLocation(lostLocation.getText().toString());
@@ -191,6 +183,14 @@ public class LostChildReportFragment extends Fragment implements ReportingInterf
                 }
             }
         });
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 
     @Override

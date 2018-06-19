@@ -80,14 +80,8 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_found_child_report, container, false);
 
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        currentLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.currentLocation);
-        findingLocation = (AutoCompleteTextView) getActivity().findViewById(R.id.foundLocation);
+        currentLocation = (AutoCompleteTextView) view.findViewById(R.id.currentLocation);
+        findingLocation = (AutoCompleteTextView) view.findViewById(R.id.foundLocation);
 
         googleApiInstance = GooglePlaceApi.getInstance(getContext());
         currentLocation.setThreshold(3);
@@ -101,14 +95,14 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
         validator = Validator.getInstance();
         validator.setContext(getContext());
 
-        childImgView = (ImageView) getActivity().findViewById(R.id.childImgView);
-        uploadImgBtn = (ImageView) getActivity().findViewById(R.id.uploadImgBtn);
-        firstNameWraapper = (TextInputLayout) getActivity().findViewById(R.id.firstNameWraapper);
-        lastNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.lastNameWrapper);
-        motherNameWrapper = (TextInputLayout) getActivity().findViewById(R.id.motherNameWrapper);
-        descWrapper = (TextInputLayout) getActivity().findViewById(R.id.descWrapper);
-        fromAgeWrapper = (TextInputLayout) getActivity().findViewById(R.id.fromAgeWrapper);
-        toAgeWrapper = (TextInputLayout) getActivity().findViewById(R.id.toAgeWrapper);
+        childImgView = (ImageView) view.findViewById(R.id.childImgView);
+        uploadImgBtn = (ImageView) view.findViewById(R.id.uploadImgBtn);
+        firstNameWraapper = (TextInputLayout) view.findViewById(R.id.firstNameWraapper);
+        lastNameWrapper = (TextInputLayout) view.findViewById(R.id.lastNameWrapper);
+        motherNameWrapper = (TextInputLayout) view.findViewById(R.id.motherNameWrapper);
+        descWrapper = (TextInputLayout) view.findViewById(R.id.descWrapper);
+        fromAgeWrapper = (TextInputLayout) view.findViewById(R.id.fromAgeWrapper);
+        toAgeWrapper = (TextInputLayout) view.findViewById(R.id.toAgeWrapper);
 
         firstNameWraapper.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -141,19 +135,19 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
             }
         });
 
-        genderRadioGroup = (RadioGroup) getActivity().findViewById(R.id.genderRadioGroup);
-        maleRadioBtn = (RadioButton) getActivity().findViewById(R.id.maleRadioBtn);
-        femaleRadioBtn = (RadioButton) getActivity().findViewById(R.id.femaleRadioBtn);
+        genderRadioGroup = (RadioGroup) view.findViewById(R.id.genderRadioGroup);
+        maleRadioBtn = (RadioButton) view.findViewById(R.id.maleRadioBtn);
+        femaleRadioBtn = (RadioButton) view.findViewById(R.id.femaleRadioBtn);
         genderRadioGroup.check(maleRadioBtn.getId());
 
-        dateBtn = (Button) getActivity().findViewById(R.id.dateBtn);
+        dateBtn = (Button) view.findViewById(R.id.dateBtn);
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setDate(v);
             }
         });
-        reportBtn = (Button) getActivity().findViewById(R.id.reportBtn);
+        reportBtn = (Button) view.findViewById(R.id.reportBtn);
         reportBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,6 +187,14 @@ public class FoundChildReportFragment extends Fragment implements ReportingInter
                 }
             }
         });
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 
 
